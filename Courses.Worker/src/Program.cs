@@ -9,8 +9,7 @@ namespace Courses.Worker {
                 .UseLamar((context, registry) => {
                     registry.ForSingletonOf<IHostedService>().Use<WorkerService>();
                 })
-                .RunAsync();
-
+                .RunConsoleAsync();
         }
     }
 }
