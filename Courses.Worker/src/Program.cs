@@ -8,6 +8,9 @@ namespace Courses.Worker {
             await new HostBuilder()
                 .UseLamar((context, registry) => {
                     registry.ForSingletonOf<IHostedService>().Use<WorkerService>();
+
+                    string connectionString = "localhost:27017";
+
                 })
                 .RunConsoleAsync();
         }

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Courses.Api.Behaviors;
+using FluentValidation;
+using Lamar;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -19,8 +23,20 @@ namespace Courses.Api {
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services) {
+        public void ConfigureContainer(ServiceRegistry services) {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.Scan(it => {
+                it.TheCallingAssembly();
+                it.WithDefaultConventions();
+                it.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
+                it.ConnectImplementationsToTypesClosing(typeof(AbstractValidator<>));
+            });
+
+            services.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
+            services.For<IMediator>().Use<Mediator>();
+
+            services.For(typeof(IPipelineBehavior<,>)).Use(typeof(ValidationBehavior<,>));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
