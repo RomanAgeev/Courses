@@ -2,13 +2,20 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Courses.Domain;
+using Guards;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
 namespace Courses.Worker {
     public class WorkerService : BackgroundService {
-        public WorkerService() {
+        public WorkerService(ICourseRepository repository) {
+            Guard.NotNull(repository, nameof(repository));
+
+            _repository = repository;
+
             var factory = new ConnectionFactory {
                 HostName = "localhost",
             };
@@ -16,6 +23,7 @@ namespace Courses.Worker {
             _channel = _connection.CreateModel();
         }
 
+        readonly ICourseRepository _repository;
         readonly IConnection _connection;
         readonly IModel _channel;
 
@@ -31,10 +39,25 @@ namespace Courses.Worker {
             );
 
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (ch, ea) => {
+            consumer.Received += async (ch, ea) => {
                 var body = ea.Body;
-                var message = Encoding.UTF8.GetString(body);
-                Console.WriteLine(" [x] Received {0}", message);
+                var json = Encoding.UTF8.GetString(body);
+
+                Console.WriteLine(json);
+                //Console.ReadLine();
+
+                var logInModel = JsonConvert.DeserializeObject<StudentLogInModel>(json);
+
+                Course course = await _repository.GetCourseAsync(logInModel.CourseTitle);
+                if (course == null) {
+                    throw new Exception("TODO");
+                }
+
+                course.AddStudent(logInModel.StudentName);
+
+                _repository.SetCourse(course);
+
+                // TODO: Ack
             };
 
             _channel.BasicConsume(
