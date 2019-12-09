@@ -1,36 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Guards;
 
 namespace Courses.Domain {
     public class Course {
-        public Course(string title, string teacher, int capacity) {
-            if (string.IsNullOrEmpty(title))
-                throw new ArgumentException($"{nameof(title)} cannot be null of empty", nameof(title));
-
-            if (string.IsNullOrEmpty(teacher))
-                throw new ArgumentException($"{nameof(teacher)} cannot be null of empty", nameof(teacher));
-
-            if (capacity <= 0)
-                throw new ArgumentException($"{nameof(capacity)} cannot be negative or zero", nameof(capacity));
+        public Course(string title, string teacher, int capacity, IEnumerable<string> students) {
+            Guard.NotNullOrEmpty(title, nameof(title));
+            Guard.NotNullOrEmpty(teacher, nameof(teacher));
+            Guard.NotZeroOrNegative(capacity, nameof(capacity));
+            Guard.NotNull(students, nameof(students));
 
             _title = title;
             _teacher = teacher;
             _capacity = capacity;
+            _students = new List<string>(students);
         }
 
-        string _title;
-        string _teacher;
-        int _capacity;
+        readonly string _title;
+        readonly string _teacher;
+        readonly int _capacity;
+        readonly List<string> _students;
 
-        readonly List<string> _students = new List<string>();
+        public string Title => _title;
+        public string Teacher => _teacher;
+        public int Capacity => _capacity;
+        public IReadOnlyCollection<string> Students => _students.AsReadOnly();
 
         public void AddStudent(string studentName) {
-            if (string.IsNullOrEmpty(studentName))
-                throw new ArgumentException($"{nameof(studentName)} cannot be null of empty", nameof(studentName));
+            Guard.NotNullOrEmpty(studentName, nameof(studentName));
 
-            bool exist = _students.Any(it => it == studentName);
-            if (exist)
+            bool inCourse = _students.Any(it => it == studentName);
+            if (inCourse)
                 throw new Exception("TODO");
 
             _students.Add(studentName);

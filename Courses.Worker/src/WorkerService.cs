@@ -43,9 +43,6 @@ namespace Courses.Worker {
                 var body = ea.Body;
                 var json = Encoding.UTF8.GetString(body);
 
-                Console.WriteLine(json);
-                //Console.ReadLine();
-
                 var logInModel = JsonConvert.DeserializeObject<StudentLogInModel>(json);
 
                 Course course = await _repository.GetCourseAsync(logInModel.CourseTitle);
@@ -55,7 +52,7 @@ namespace Courses.Worker {
 
                 course.AddStudent(logInModel.StudentName);
 
-                _repository.SetCourse(course);
+                await _repository.SetCourseAsync(course);
 
                 // TODO: Ack
             };

@@ -19,13 +19,21 @@ namespace Courses.Infrastructure {
         readonly IMongoCollection<CourseModel> _courses;
 
         public async Task<Course> GetCourseAsync(string courseTitle) {
+            Guard.NotNullOrEmpty(courseTitle, nameof(courseTitle));
+
             var cursor =  await _courses.FindAsync<CourseModel>(it => it.Title == courseTitle);
             var courseModel = await cursor.FirstOrDefaultAsync();
             if (courseModel != null)
-                return new Course(courseModel.Title, courseModel.Teacher, courseModel.Capacity);
+                return new Course(courseModel.Title, courseModel.Teacher, courseModel.Capacity, courseModel.Students);
             return null;
         }
-        public void SetCourse(Course course) {
+        public async Task SetCourseAsync(Course course) {
+            Guard.NotNull(course, nameof(course)); 
+
+            var filter = Builders<CourseModel>.Filter.Eq("title", course.Title);
+            var update = Builders<CourseModel>.Update.Set("students", course.Students);
+
+            await _courses.UpdateOneAsync(filter, update);
         }
     }
 }
