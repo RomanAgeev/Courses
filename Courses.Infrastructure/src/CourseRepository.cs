@@ -1,8 +1,9 @@
-﻿using System;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Courses.Domain;
 using Guards;
 using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace Courses.Infrastructure {
     public class CourseRepository : ICourseRepository {
@@ -13,27 +14,51 @@ namespace Courses.Infrastructure {
             var client = new MongoClient(connectionString);
             var database = client.GetDatabase(databaseName);
 
-            _courses = database.GetCollection<CourseModel>("courses");
+            _courses = database.GetCollection<BsonDocument>(Collections.Courses);
         }
 
-        readonly IMongoCollection<CourseModel> _courses;
+        readonly IMongoCollection<BsonDocument> _courses;
 
         public async Task<Course> GetCourseAsync(string courseTitle) {
             Guard.NotNullOrEmpty(courseTitle, nameof(courseTitle));
 
-            var cursor =  await _courses.FindAsync<CourseModel>(it => it.Title == courseTitle);
-            var courseModel = await cursor.FirstOrDefaultAsync();
-            if (courseModel != null)
-                return new Course(courseModel.Title, courseModel.Teacher, courseModel.Capacity, courseModel.Students);
-            return null;
+            var filter = Builders<BsonDocument>.Filter
+                .Eq(Fields.CouseTitle, courseTitle);
+
+            var project = Builders<BsonDocument>.Projection
+                .Include(Fields.Id)
+                .Include(Fields.Version)
+                .Include(Fields.CourseCapacity)
+                .Include(Fields.CourseStudents);
+
+            var document = await _courses.Find(filter).Project(project).SingleOrDefaultAsync();
+
+            return document != null ?
+                new Course(
+                    document[Fields.Id].ToString(),
+                    document[Fields.Version].ToInt32(),
+                    document[Fields.CourseCapacity].ToInt32(),
+                    document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString())) :
+                null;
         }
-        public async Task SetCourseAsync(Course course) {
+        public async Task<bool> SetCourseAsync(int version, Course course) {
             Guard.NotNull(course, nameof(course)); 
 
-            var filter = Builders<CourseModel>.Filter.Eq("title", course.Title);
-            var update = Builders<CourseModel>.Update.Set("students", course.Students);
+            var idFilter = Builders<BsonDocument>.Filter
+                .Eq(Fields.Id, ObjectId.Parse(course.Id));
 
-            await _courses.UpdateOneAsync(filter, update);
+            var versionFilter = Builders<BsonDocument>.Filter
+                .Eq(Fields.Version, version);
+
+            var filter = idFilter & versionFilter;
+
+            var update = Builders<BsonDocument>.Update
+                .Set(Fields.CourseStudents, course.Students)
+                .Set(Fields.Version, course.Version);
+
+            UpdateResult result = await _courses.UpdateOneAsync(filter, update);
+
+            return result.ModifiedCount == 1;
         }
     }
 }

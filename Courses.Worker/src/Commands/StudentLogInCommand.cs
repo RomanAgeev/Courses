@@ -33,14 +33,24 @@ namespace Courses.Worker.Commands {
         readonly ICourseRepository _repository;
 
         public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
-            Course course = await _repository.GetCourseAsync(command.CourseTitle);
-            if (course == null) {
-                throw new Exception("TODO");
-            }
+            bool suceed;
 
-            course.AddStudent(command.StudentName);
+            do {
+                Course course = await _repository.GetCourseAsync(command.CourseTitle);
+                if (course == null) {
+                    throw new Exception("TODO");
+                }
 
-            await _repository.SetCourseAsync(course);
+                int version = course.Version;
+
+                try {
+                    course.AddStudent(command.StudentName);
+                } catch {
+                    return false;
+                }
+
+                suceed = await _repository.SetCourseAsync(version, course);
+            } while(!suceed);
             
             return true;
         }
