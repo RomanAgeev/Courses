@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="RA_Guards" Version="1.0.1-release" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Courses.Utils\Courses.Utils.csproj" />
   </ItemGroup>
 

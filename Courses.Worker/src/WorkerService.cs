@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Courses.Domain;
+using Courses.Utils;
 using Courses.Worker.Commands;
 using Guards;
 using MediatR;
@@ -45,21 +46,9 @@ namespace Courses.Worker {
 
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += async (ch, ea) => {
-                var body = ea.Body;
-                var json = Encoding.UTF8.GetString(body);
+                var command = Helpers.DeserializeObject<StudentLogInCommand>(ea.Body);
 
-                var command = JsonConvert.DeserializeObject<StudentLogInCommand>(json);
-
-                await _mediator.Send(command);
-
-                // Course course = await _repository.GetCourseAsync(logInModel.CourseTitle);
-                // if (course == null) {
-                //     throw new Exception("TODO");
-                // }
-
-                // course.AddStudent(logInModel.StudentName);
-
-                // await _repository.SetCourseAsync(course);
+                await _mediator.Send(command); 
 
                 // TODO: Ack
             };

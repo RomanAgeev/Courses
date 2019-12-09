@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Courses.Api.Commands;
+using Guards;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +11,9 @@ namespace Courses.Api.Controllers {
     [ApiController]
     public class StudentController : ControllerBase {
         public StudentController(IMediator mediator) {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            Guard.NotNull(mediator, nameof(mediator));
+            
+            _mediator = mediator;
         }
 
         readonly IMediator _mediator;

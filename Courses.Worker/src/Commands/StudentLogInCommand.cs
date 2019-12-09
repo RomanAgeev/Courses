@@ -1,6 +1,9 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Courses.Domain;
 using FluentValidation;
+using Guards;
 using MediatR;
 
 namespace Courses.Worker.Commands {
@@ -21,12 +24,25 @@ namespace Courses.Worker.Commands {
     }
 
     public class StudentLogInCommandHandler : IRequestHandler<StudentLogInCommand, bool> {
-        public StudentLogInCommandHandler() {
+        public StudentLogInCommandHandler(ICourseRepository repository) {
+            Guard.NotNull(repository, nameof(repository));
+
+            _repository = repository;
         }
 
+        readonly ICourseRepository _repository;
+
         public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
-            System.Console.WriteLine("WORKER: StudentLogInCommandHandler");
-            return await Task.FromResult(true);
+            Course course = await _repository.GetCourseAsync(command.CourseTitle);
+            if (course == null) {
+                throw new Exception("TODO");
+            }
+
+            course.AddStudent(command.StudentName);
+
+            await _repository.SetCourseAsync(course);
+            
+            return true;
         }
     }
 }

@@ -1,8 +1,8 @@
 using System;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
+using Guards;
+using Courses.Utils;
 
 namespace Courses.Api.Services {
     public interface IMessageService {
@@ -31,12 +31,9 @@ namespace Courses.Api.Services {
         readonly IModel _channel;
 
         public Task SendMessage(object payload) {
-            if (payload == null) {
-                throw new ArgumentNullException(nameof(payload));
-            }
+            Guard.NotNull(payload, nameof(payload));
 
-            string json = JsonConvert.SerializeObject(payload);
-            byte[] body = Encoding.UTF8.GetBytes(json);
+            byte[] body = Helpers.SerializeObject(payload);
 
             _channel.BasicPublish(
                 exchange: "",

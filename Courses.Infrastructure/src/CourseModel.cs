@@ -19,5 +19,8 @@ namespace Courses.Infrastructure {
         
         [BsonElement("students")]
         public IEnumerable<string> Students { get; set; }
+
+        [BsonElement("version")]
+        public int Version { get; set; }
     }
 }

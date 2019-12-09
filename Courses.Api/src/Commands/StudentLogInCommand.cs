@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Courses.Api.Services;
 using FluentValidation;
+using Guards;
 using MediatR;
 
 namespace Courses.Api.Commands {
@@ -24,7 +25,9 @@ namespace Courses.Api.Commands {
 
     public class StudentLogInCommandHandler : IRequestHandler<StudentLogInCommand, bool> {
         public StudentLogInCommandHandler(IMessageService messageService) {
-            _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            Guard.NotNull(messageService, nameof(messageService));
+            
+            _messageService = messageService;
         }
 
         readonly IMessageService _messageService;
