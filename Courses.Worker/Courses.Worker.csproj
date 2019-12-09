@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.6.0" />
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="4.0.2" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="RabbitMQ.Client" Version="5.1.2" />
@@ -19,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Courses.Domain\Courses.Domain.csproj" />
     <ProjectReference Include="..\Courses.Infrastructure\Courses.Infrastructure.csproj" />
+    <ProjectReference Include="..\Courses.Utils\Courses.Utils.csproj" />
   </ItemGroup>
 
 </Project>

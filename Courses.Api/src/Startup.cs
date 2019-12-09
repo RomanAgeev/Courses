@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Courses.Api.Behaviors;
-using FluentValidation;
+﻿using FluentValidation;
 using Lamar;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +23,7 @@ namespace Courses.Api {
 
             services.Scan(it => {
                 it.TheCallingAssembly();
+                it.AssemblyContainingType<Courses.Utils.IAssemblyFinder>();
                 it.WithDefaultConventions();
                 it.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
                 it.ConnectImplementationsToTypesClosing(typeof(AbstractValidator<>));
@@ -36,7 +32,7 @@ namespace Courses.Api {
             services.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
             services.For<IMediator>().Use<Mediator>();
 
-            services.For(typeof(IPipelineBehavior<,>)).Use(typeof(ValidationBehavior<,>));
+            services.For(typeof(IPipelineBehavior<,>)).Use(typeof(Courses.Utils.ValidationBehavior<,>));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {

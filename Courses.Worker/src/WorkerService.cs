@@ -3,7 +3,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Courses.Domain;
+using Courses.Worker.Commands;
 using Guards;
+using MediatR;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -11,9 +13,11 @@ using RabbitMQ.Client.Events;
 
 namespace Courses.Worker {
     public class WorkerService : BackgroundService {
-        public WorkerService(ICourseRepository repository) {
+        public WorkerService(IMediator mediator, ICourseRepository repository) {
+            Guard.NotNull(mediator, nameof(mediator));
             Guard.NotNull(repository, nameof(repository));
 
+            _mediator = mediator;
             _repository = repository;
 
             var factory = new ConnectionFactory {
@@ -23,6 +27,7 @@ namespace Courses.Worker {
             _channel = _connection.CreateModel();
         }
 
+        readonly IMediator _mediator;
         readonly ICourseRepository _repository;
         readonly IConnection _connection;
         readonly IModel _channel;
@@ -43,16 +48,18 @@ namespace Courses.Worker {
                 var body = ea.Body;
                 var json = Encoding.UTF8.GetString(body);
 
-                var logInModel = JsonConvert.DeserializeObject<StudentLogInModel>(json);
+                var command = JsonConvert.DeserializeObject<StudentLogInCommand>(json);
 
-                Course course = await _repository.GetCourseAsync(logInModel.CourseTitle);
-                if (course == null) {
-                    throw new Exception("TODO");
-                }
+                await _mediator.Send(command);
 
-                course.AddStudent(logInModel.StudentName);
+                // Course course = await _repository.GetCourseAsync(logInModel.CourseTitle);
+                // if (course == null) {
+                //     throw new Exception("TODO");
+                // }
 
-                await _repository.SetCourseAsync(course);
+                // course.AddStudent(logInModel.StudentName);
+
+                // await _repository.SetCourseAsync(course);
 
                 // TODO: Ack
             };

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 
-namespace Courses.Api.Behaviors {
+namespace Courses.Utils {
     public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> {
         public ValidationBehavior(AbstractValidator<TRequest> validator) {
             _validator = validator ?? throw new ArgumentNullException(nameof(validator));
