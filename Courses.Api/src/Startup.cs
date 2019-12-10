@@ -1,14 +1,13 @@
-﻿using FluentValidation;
+﻿using Courses.Api.Commands;
+using Courses.Utils;
+using FluentValidation;
 using Lamar;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Courses.Api {
     public class Startup {
@@ -18,10 +17,12 @@ namespace Courses.Api {
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureContainer(ServiceRegistry services) {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+        public void ConfigureContainer(ServiceRegistry registry) {
+            registry
+                .AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.Scan(it => {
+            registry.Scan(it => {
                 it.TheCallingAssembly();
                 it.AssemblyContainingType<Courses.Utils.IAssemblyFinder>();
                 it.WithDefaultConventions();
@@ -29,10 +30,28 @@ namespace Courses.Api {
                 it.ConnectImplementationsToTypesClosing(typeof(AbstractValidator<>));
             });
 
-            services.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
-            services.For<IMediator>().Use<Mediator>();
+            registry
+                .For<ServiceFactory>()
+                .Use(ctx => ctx.GetInstance);
 
-            services.For(typeof(IPipelineBehavior<,>)).Use(typeof(Courses.Utils.ValidationBehavior<,>));
+            registry
+                .For<IMediator>()
+                .Use<Mediator>();
+
+            registry
+                .For(typeof(IPipelineBehavior<,>))
+                .Use(typeof(Courses.Utils.ValidationBehavior<,>));
+
+            registry
+                .For<IMessageSender>()
+                .Add(new MessageSender(Queues.LogIn))
+                .Named(Queues.LogIn);
+
+            registry
+                .ForConcreteType<StudentLogInCommandHandler>()
+                .Configure
+                .Ctor<IMessageSender>()
+                .Named(Queues.LogIn);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {

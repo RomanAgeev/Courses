@@ -1,25 +1,25 @@
 using System;
-using System.Threading.Tasks;
-using RabbitMQ.Client;
 using Guards;
-using Courses.Utils;
+using RabbitMQ.Client;
 
-namespace Courses.Api.Services {
-    public interface IMessageService {
-        Task SendMessage(object payload);
+namespace Courses.Utils {
+    public interface IMessageSender : IDisposable {
+        void SendMessage(object payload);
     }
 
-    public class MessageService : IMessageService, IDisposable {
-        public MessageService() {
-            var factory = new ConnectionFactory {
-                HostName = "localhost"
-            };
+    public class MessageSender : IMessageSender {
+        public MessageSender(string queueName) {
+            Guard.NotNullOrEmpty(queueName, nameof(queueName));
+
+            _queueName = queueName;
+
+            var factory = new ConnectionFactory { HostName = "localhost" };
 
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
             _channel.QueueDeclare(
-                queue: "hello",
+                queue: queueName,
                 durable: false,
                 exclusive: false,
                 autoDelete: false,
@@ -27,22 +27,23 @@ namespace Courses.Api.Services {
             );
         }
 
+        readonly string _queueName;
         readonly IConnection _connection;
         readonly IModel _channel;
 
-        public Task SendMessage(object payload) {
+        public void SendMessage(object payload) {
+            Console.WriteLine($" [x] Sending to {_queueName}");
+
             Guard.NotNull(payload, nameof(payload));
 
             byte[] body = Helpers.SerializeObject(payload);
 
             _channel.BasicPublish(
                 exchange: "",
-                routingKey: "hello",
+                routingKey: _queueName,
                 basicProperties: null,
                 body: body
             );
-
-            return Task.CompletedTask;
         }
 
         public void Dispose() {

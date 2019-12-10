@@ -1,7 +1,6 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Courses.Api.Services;
+using Courses.Utils;
 using FluentValidation;
 using Guards;
 using MediatR;
@@ -24,21 +23,21 @@ namespace Courses.Api.Commands {
     }
 
     public class StudentLogInCommandHandler : IRequestHandler<StudentLogInCommand, bool> {
-        public StudentLogInCommandHandler(IMessageService messageService) {
-            Guard.NotNull(messageService, nameof(messageService));
+        public StudentLogInCommandHandler(IMessageSender messageSender) {
+            Guard.NotNull(messageSender, nameof(messageSender));
             
-            _messageService = messageService;
+            _messageSender = messageSender;
         }
 
-        readonly IMessageService _messageService;
+        readonly IMessageSender _messageSender;
 
-        public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
-            await _messageService.SendMessage(new {
+        public Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
+            _messageSender.SendMessage(new {
                 command.StudentName,
                 command.CourseTitle
             });
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }
