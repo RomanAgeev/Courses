@@ -2,6 +2,7 @@
 using Courses.Domain;
 using Courses.Infrastructure;
 using Courses.Utils;
+using Courses.Worker.Commands;
 using FluentValidation;
 using Lamar;
 using Lamar.Microsoft.DependencyInjection;
@@ -51,10 +52,21 @@ namespace Courses.Worker {
                         .Named(Queues.LogIn);
 
                     registry
+                        .For<IMessageSender>()
+                        .Add(new MessageSender(Queues.Notify))
+                        .Named(Queues.Notify);
+
+                    registry
                         .ForConcreteType<WorkerService>()
                         .Configure
                         .Ctor<MessageReceiver>()
                         .Named(Queues.LogIn);
+
+                    registry
+                        .ForConcreteType<StudentLogInCommand>()
+                        .Configure
+                        .Ctor<MessageSender>("messageSender")
+                        .Named(Queues.Notify);
                 })
                 .RunConsoleAsync();
         }

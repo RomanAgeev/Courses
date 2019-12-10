@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Courses.Domain;
+using Courses.Utils;
 using FluentValidation;
 using Guards;
 using MediatR;
@@ -24,13 +25,16 @@ namespace Courses.Worker.Commands {
     }
 
     public class StudentLogInCommandHandler : IRequestHandler<StudentLogInCommand, bool> {
-        public StudentLogInCommandHandler(ICourseRepository repository) {
+        public StudentLogInCommandHandler(ICourseRepository repository, IMessageSender messageSender) {
             Guard.NotNull(repository, nameof(repository));
+            Guard.NotNull(messageSender, nameof(messageSender));
 
             _repository = repository;
+            _messageSender = messageSender;
         }
 
         readonly ICourseRepository _repository;
+        readonly IMessageSender _messageSender;
 
         public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
             bool suceed;
@@ -51,6 +55,11 @@ namespace Courses.Worker.Commands {
 
                 suceed = await _repository.SetCourseAsync(version, course);
             } while(!suceed);
+
+            _messageSender.SendMessage(new {
+                command.CourseTitle,
+                command.StudentName
+            });
             
             return true;
         }
