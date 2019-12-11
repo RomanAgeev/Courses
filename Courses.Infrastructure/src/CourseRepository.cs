@@ -7,17 +7,13 @@ using MongoDB.Bson;
 
 namespace Courses.Infrastructure {
     public class CourseRepository : ICourseRepository {
-        public CourseRepository(string connectionString, string databaseName) {
-            Guard.NotNullOrEmpty(connectionString, nameof(connectionString));
-            Guard.NotNullOrEmpty(databaseName, nameof(databaseName));
+        public CourseRepository(DbContext context) {
+            Guard.NotNull(context, nameof(context));
 
-            var client = new MongoClient(connectionString);
-            var database = client.GetDatabase(databaseName);
-
-            _courses = database.GetCollection<BsonDocument>(Collections.Courses);
+            _context = context;
         }
 
-        readonly IMongoCollection<BsonDocument> _courses;
+        readonly DbContext _context;
 
         public async Task<Course> GetCourseAsync(string courseTitle) {
             Guard.NotNullOrEmpty(courseTitle, nameof(courseTitle));
@@ -31,7 +27,7 @@ namespace Courses.Infrastructure {
                 .Include(Fields.CourseCapacity)
                 .Include(Fields.CourseStudents);
 
-            var document = await _courses.Find(filter).Project(project).SingleOrDefaultAsync();
+            var document = await _context.Courses.Find(filter).Project(project).SingleOrDefaultAsync();
 
             return document != null ?
                 new Course(
@@ -56,7 +52,7 @@ namespace Courses.Infrastructure {
                 .Set(Fields.CourseStudents, course.Students)
                 .Set(Fields.Version, course.Version);
 
-            UpdateResult result = await _courses.UpdateOneAsync(filter, update);
+            UpdateResult result = await _context.Courses.UpdateOneAsync(filter, update);
 
             return result.ModifiedCount == 1;
         }

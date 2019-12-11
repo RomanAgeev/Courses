@@ -1,7 +1,8 @@
 namespace Courses.Infrastructure {
     public static class Collections {
         public const string
-            Courses = "courses";
+            Courses = "courses",
+            Students = "students";
     }
 
     public static class Fields {

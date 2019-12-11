@@ -39,8 +39,12 @@ namespace Courses.Worker {
                     string connectionString = "mongodb://dev:dev@localhost:27017/courses_dev";
 
                     registry
-                        .ForSingletonOf<ICourseRepository>()
-                        .Use(new CourseRepository(connectionString, "courses_dev"));
+                        .ForSingletonOf<DbContext>()
+                        .Use(new DbContext(connectionString, "courses_dev"));
+
+                    registry
+                        .For<ICourseRepository>()
+                        .Use<CourseRepository>();
 
                     registry
                         .ForSingletonOf<IHostedService>()
