@@ -4,4 +4,11 @@ namespace Courses.Utils {
             LogIn = "QUEUE_LOGIN",
             Notify = "QUEUE_NOTIFY";
     }
+
+    public static class LogInResults {
+        public const string
+            Succeed = "Succeed",
+            NoCourseCapacity = "NoCourseCapacity",
+            AlreadyInCourse = "AlreadyInCourse";
+    }
 }

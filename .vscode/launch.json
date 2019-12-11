@@ -29,6 +29,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "Courses.Notification",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Courses.Notification/bin/Debug/netcoreapp2.2/Courses.Notification.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Courses.Notification",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",

@@ -38,6 +38,7 @@ namespace Courses.Worker.Commands {
 
         public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
             bool suceed;
+            string result = LogInResults.Succeed;
 
             do {
                 Course course = await _repository.GetCourseAsync(command.CourseTitle);
@@ -50,13 +51,15 @@ namespace Courses.Worker.Commands {
                 try {
                     course.AddStudent(command.StudentName);
                 } catch {
-                    return false;
+                    result = LogInResults.NoCourseCapacity;
+                    break;
                 }
 
                 suceed = await _repository.SetCourseAsync(version, course);
             } while(!suceed);
 
             _messageSender.SendMessage(new {
+                LogInResult = result,
                 command.CourseTitle,
                 command.StudentName
             });
