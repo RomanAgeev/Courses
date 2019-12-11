@@ -8,19 +8,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace Courses.Api.Controllers {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class StudentController : ControllerBase {
-        public StudentController(IMediator mediator) {
-            Guard.NotNull(mediator, nameof(mediator));
-            
-            _mediator = mediator;
+    public class StudentController : CourseControllerBase {
+        public StudentController(IMediator mediator)
+            : base(mediator) {
         }
-
-        readonly IMediator _mediator;
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> Post(StudentInsertCommand command) {
-            await _mediator.Send(command);
+            await Mediator.Send(command);
 
             return NoContent();
         }

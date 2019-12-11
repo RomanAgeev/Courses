@@ -1,19 +1,20 @@
 using System.Net;
 using System.Threading.Tasks;
 using Courses.Api.Commands;
-using Guards;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Courses.Api.Controllers {
-    public abstract class EnrollmentControllerBase<T> : CourseControllerBase where T : StudentEnrollCommandBase {
-        protected EnrollmentControllerBase(IMediator mediator)
+    [Route("api/v1/[controller]")]
+    [ApiController]
+    public class CourseController : CourseControllerBase {
+        public CourseController(IMediator mediator)
             : base(mediator) {
         }
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> Post(T command) {
+        public async Task<IActionResult> Post(CourseInsertCommand command) {
             await Mediator.Send(command);
 
             return NoContent();

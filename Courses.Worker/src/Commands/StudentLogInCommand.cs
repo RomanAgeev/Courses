@@ -11,7 +11,7 @@ namespace Courses.Worker.Commands {
     public class StudentLogInCommand : IRequest<bool> {
         public class Validator : AbstractValidator<StudentLogInCommand> {
             public Validator() {
-                RuleFor(it => it.StudentName)
+                RuleFor(it => it.StudentEmail)
                     .NotNull()
                     .NotEmpty();
                 RuleFor(it => it.CourseTitle)
@@ -20,48 +20,57 @@ namespace Courses.Worker.Commands {
             }
         }
 
-        public string StudentName { get; set; }
+        public string StudentEmail { get; set; }
         public string CourseTitle { get; set; }
     }
 
     public class StudentLogInCommandHandler : IRequestHandler<StudentLogInCommand, bool> {
-        public StudentLogInCommandHandler(ICourseRepository repository, IMessageSender messageSender) {
-            Guard.NotNull(repository, nameof(repository));
+        public StudentLogInCommandHandler(ICourseRepository courses, IStudentRepository students, IMessageSender messageSender) {
+            Guard.NotNull(courses, nameof(courses));
+            Guard.NotNull(students, nameof(students));
             Guard.NotNull(messageSender, nameof(messageSender));
 
-            _repository = repository;
+            _courses = courses;
+            _students = students;
             _messageSender = messageSender;
         }
 
-        readonly ICourseRepository _repository;
+        readonly ICourseRepository _courses;
+        readonly IStudentRepository _students;
         readonly IMessageSender _messageSender;
 
         public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
+            Student student = await _students.GetStudentAsync(command.StudentEmail);
+            if (student == null) {
+                throw new Exception("TODO");
+            }
+
             bool suceed;
             string result = LogInResults.Succeed;
 
             do {
-                Course course = await _repository.GetCourseAsync(command.CourseTitle);
-                if (course == null) {
+                CourseEnrollment enrollment = await _courses.GetCourseEnrollmentAsync(command.CourseTitle);
+                if (enrollment == null) {
                     throw new Exception("TODO");
                 }
 
-                int version = course.Version;
+                int version = enrollment.CourseVersion;
 
                 try {
-                    course.AddStudent(command.StudentName);
+                    enrollment.AddStudent(student.Id);
                 } catch {
                     result = LogInResults.NoCourseCapacity;
                     break;
                 }
 
-                suceed = await _repository.SetCourseAsync(version, course);
+                suceed = await _courses.SetCourseEnrollmentAsync(version, enrollment);
             } while(!suceed);
 
             _messageSender.SendMessage(new {
                 LogInResult = result,
-                command.CourseTitle,
-                command.StudentName
+                CourseTitle = command.CourseTitle,
+                StudentName = student.Name,
+                StudentEmail = command.StudentEmail
             });
             
             return true;

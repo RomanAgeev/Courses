@@ -5,7 +5,7 @@ namespace Courses.Api.Commands {
     public abstract class StudentEnrollCommandBase : IRequest<bool> {
         public abstract class Validator<T> : AbstractValidator<T> where T : StudentEnrollCommandBase {
             public Validator() {
-                RuleFor(it => it.StudentName)
+                RuleFor(it => it.StudentEmail)
                     .NotNull()
                     .NotEmpty();
                 RuleFor(it => it.CourseTitle)
@@ -13,7 +13,7 @@ namespace Courses.Api.Commands {
                     .NotEmpty();
             }
         }
-        public string StudentName { get; set; }
+        public string StudentEmail { get; set; }
         public string CourseTitle { get; set; }
     }
 }

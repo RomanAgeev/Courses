@@ -23,7 +23,7 @@ namespace Courses.Api.Commands {
             System.Console.WriteLine("V2");
 
             _messageSender.SendMessage(new {
-                command.StudentName,
+                command.StudentEmail,
                 command.CourseTitle
             });
 

@@ -9,7 +9,8 @@ namespace Courses.Infrastructure {
         public const string
             Id = "_id",
             Version = "version",
-            CouseTitle = "title",
+            CourseTitle = "title",
+            CourseTeacher = "teacher",
             CourseCapacity = "capacity",
             CourseStudents = "students",
             StudentName = "name",

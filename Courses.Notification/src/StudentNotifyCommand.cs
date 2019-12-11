@@ -22,6 +22,7 @@ namespace Courses.Notification {
         }
         
         public string StudentName { get; set; }
+        public string StudentEmail { get; set; }
         public string CourseTitle { get; set; }
         public string LogInResult { get; set; }
     }

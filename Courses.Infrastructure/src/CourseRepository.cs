@@ -19,7 +19,46 @@ namespace Courses.Infrastructure {
             Guard.NotNullOrEmpty(courseTitle, nameof(courseTitle));
 
             var filter = Builders<BsonDocument>.Filter
-                .Eq(Fields.CouseTitle, courseTitle);
+                .Eq(Fields.CourseTitle, courseTitle);
+
+            var document = await _context.Courses
+                .Find(filter)
+                .SingleOrDefaultAsync();
+
+            if (document == null) {
+                return null;
+            }
+
+            var course = new Course(
+                document[Fields.CourseTitle].ToString(),
+                document[Fields.CourseTeacher].ToString(),
+                document[Fields.CourseCapacity].ToInt32());
+
+            course.InitId(document[Fields.Id].ToString());
+            course.InitVersion(document[Fields.Version].ToInt32());
+
+            return course;
+        }
+
+        public async Task InsertCourseAsync(Course course) {
+            Guard.NotNull(course, nameof(course));
+
+            var document = new BsonDocument {
+                { Fields.Version, course.Version },
+                { Fields.CourseTitle, course.Title },
+                { Fields.CourseTeacher, course.Teacher },
+                { Fields.CourseCapacity, course.Capacity },
+                { Fields.CourseStudents, new BsonArray() }
+            };
+
+            await _context.Courses.InsertOneAsync(document); 
+        }
+
+        public async Task<CourseEnrollment> GetCourseEnrollmentAsync(string courseTitle) {
+            Guard.NotNullOrEmpty(courseTitle, nameof(courseTitle));
+
+            var filter = Builders<BsonDocument>.Filter
+                .Eq(Fields.CourseTitle, courseTitle);
 
             var project = Builders<BsonDocument>.Projection
                 .Include(Fields.Id)
@@ -35,21 +74,20 @@ namespace Courses.Infrastructure {
             if (document == null)
                 return null;
 
-            var course = new Course(
+            var enrollment = new CourseEnrollment(
+                document[Fields.Id].ToString(),
+                document[Fields.Version].ToInt32(),
                 document[Fields.CourseCapacity].ToInt32(),
                 document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString()));
 
-            course.InitId(document[Fields.Id].ToString());
-            course.InitVersion(document[Fields.Version].ToInt32());
-
-            return course;
+            return enrollment;
         }
         
-        public async Task<bool> SetCourseAsync(int version, Course course) {
-            Guard.NotNull(course, nameof(course)); 
+        public async Task<bool> SetCourseEnrollmentAsync(int version, CourseEnrollment enrollment) {
+            Guard.NotNull(enrollment, nameof(enrollment)); 
 
             var idFilter = Builders<BsonDocument>.Filter
-                .Eq(Fields.Id, ObjectId.Parse(course.Id));
+                .Eq(Fields.Id, ObjectId.Parse(enrollment.CourseId));
 
             var versionFilter = Builders<BsonDocument>.Filter
                 .Eq(Fields.Version, version);
@@ -57,8 +95,8 @@ namespace Courses.Infrastructure {
             var filter = idFilter & versionFilter;
 
             var update = Builders<BsonDocument>.Update
-                .Set(Fields.CourseStudents, course.Students)
-                .Set(Fields.Version, course.Version);
+                .Set(Fields.CourseStudents, enrollment.Students)
+                .Set(Fields.Version, enrollment.CourseVersion);
 
             UpdateResult result = await _context.Courses.UpdateOneAsync(filter, update);
 
