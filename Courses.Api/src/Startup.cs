@@ -31,6 +31,14 @@ namespace Courses.Api {
             });
 
             registry
+                .For(typeof(AbstractValidator<StudentEnrollCommandV1>))
+                .Use(typeof(StudentEnrollCommandV1.Validator));
+            
+            registry
+                .For(typeof(AbstractValidator<StudentEnrollCommandV2>))
+                .Use(typeof(StudentEnrollCommandV2.Validator));
+
+            registry
                 .For<ServiceFactory>()
                 .Use(ctx => ctx.GetInstance);
 
@@ -48,7 +56,7 @@ namespace Courses.Api {
                 .Named(Queues.LogIn);
 
             registry
-                .ForConcreteType<StudentLogInCommandHandler>()
+                .ForConcreteType<StudentEnrollCommandHandlerV2>()
                 .Configure
                 .Ctor<IMessageSender>()
                 .Named(Queues.LogIn);
