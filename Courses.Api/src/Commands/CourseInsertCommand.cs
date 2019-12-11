@@ -38,7 +38,7 @@ namespace Courses.Api.Commands {
         public async Task<bool> Handle(CourseInsertCommand command, CancellationToken ct) {
             Course course = await _repository.GetCourseAsync(command.Title);
             if (course != null) {
-                throw new Exception("TODO");
+                throw new DomainException($"Course '{command.Title}' already exists");
             }
 
             course = new Course(command.Title, command.Teacher, command.Capacity);

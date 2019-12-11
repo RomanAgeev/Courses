@@ -20,8 +20,6 @@ namespace Courses.Api.Commands {
         readonly IMessageSender _messageSender;
 
         public Task<bool> Handle(StudentEnrollCommandV2 command, CancellationToken ct) {
-            System.Console.WriteLine("V2");
-
             _messageSender.SendMessage(new {
                 command.StudentEmail,
                 command.CourseTitle

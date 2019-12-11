@@ -13,7 +13,6 @@ namespace Courses.Api.Commands {
         }
 
         public Task<bool> Handle(StudentEnrollCommandV1 command, CancellationToken ct) {
-            System.Console.WriteLine("V1");
             return Task.FromResult(true);
         }
     }

@@ -37,7 +37,7 @@ namespace Courses.Api.Commands {
         public async Task<bool> Handle(StudentInsertCommand command, CancellationToken ct) {
             Student student = await _repository.GetStudentAsync(command.Email);
             if (student != null) {
-                throw new Exception("TODO");
+                throw new DomainException($"Student email '{command.Email}' is already in use");
             }
 
             student = new Student(command.Name, command.Age, command.Email);

@@ -1,4 +1,5 @@
 ﻿using Courses.Api.Commands;
+using Courses.Api.Middleware;
 using Courses.Infrastructure;
 using Courses.Utils;
 using FluentValidation;
@@ -80,6 +81,7 @@ namespace Courses.Api {
             // }
 
             // app.UseHttpsRedirection();
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseMvc();
         }
     }
