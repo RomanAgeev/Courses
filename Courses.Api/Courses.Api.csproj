@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Courses.Domain\Courses.Domain.csproj" />
+    <ProjectReference Include="..\Courses.Infrastructure\Courses.Infrastructure.csproj" />
     <ProjectReference Include="..\Courses.Utils\Courses.Utils.csproj" />
   </ItemGroup>
 

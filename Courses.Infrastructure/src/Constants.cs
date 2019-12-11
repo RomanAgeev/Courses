@@ -11,6 +11,9 @@ namespace Courses.Infrastructure {
             Version = "version",
             CouseTitle = "title",
             CourseCapacity = "capacity",
-            CourseStudents = "students";
+            CourseStudents = "students",
+            StudentName = "name",
+            StudentEmail = "email",
+            StudentAge = "age";
     }
 }

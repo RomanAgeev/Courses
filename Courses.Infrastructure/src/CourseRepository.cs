@@ -27,16 +27,24 @@ namespace Courses.Infrastructure {
                 .Include(Fields.CourseCapacity)
                 .Include(Fields.CourseStudents);
 
-            var document = await _context.Courses.Find(filter).Project(project).SingleOrDefaultAsync();
+            var document = await _context.Courses
+                .Find(filter)
+                .Project(project)
+                .SingleOrDefaultAsync();
 
-            return document != null ?
-                new Course(
-                    document[Fields.Id].ToString(),
-                    document[Fields.Version].ToInt32(),
-                    document[Fields.CourseCapacity].ToInt32(),
-                    document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString())) :
-                null;
+            if (document == null)
+                return null;
+
+            var course = new Course(
+                document[Fields.CourseCapacity].ToInt32(),
+                document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString()));
+
+            course.InitId(document[Fields.Id].ToString());
+            course.InitVersion(document[Fields.Version].ToInt32());
+
+            return course;
         }
+        
         public async Task<bool> SetCourseAsync(int version, Course course) {
             Guard.NotNull(course, nameof(course)); 
 

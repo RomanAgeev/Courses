@@ -1,4 +1,5 @@
 ﻿using Courses.Api.Commands;
+using Courses.Infrastructure;
 using Courses.Utils;
 using FluentValidation;
 using Lamar;
@@ -24,11 +25,19 @@ namespace Courses.Api {
 
             registry.Scan(it => {
                 it.TheCallingAssembly();
+                it.AssemblyContainingType<Courses.Domain.IAssemblyFinder>();
+                it.AssemblyContainingType<Courses.Infrastructure.IAssemblyFinder>();
                 it.AssemblyContainingType<Courses.Utils.IAssemblyFinder>();
                 it.WithDefaultConventions();
                 it.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
                 it.ConnectImplementationsToTypesClosing(typeof(AbstractValidator<>));
             });
+
+            string connectionString = "mongodb://dev:dev@localhost:27017/courses_dev";
+
+            registry
+                .ForSingletonOf<DbContext>()
+                .Use(new DbContext(connectionString, "courses_dev"));
 
             registry
                 .For(typeof(AbstractValidator<StudentEnrollCommandV1>))

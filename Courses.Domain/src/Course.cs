@@ -4,9 +4,7 @@ using Guards;
 
 namespace Courses.Domain {
     public class Course : Entity {
-        public Course(string id, int version, int capacity, IEnumerable<string> students)
-            : base(id, version) {
-
+        public Course(int capacity, IEnumerable<string> students) {
             Guard.NotZeroOrNegative(capacity, nameof(capacity));
             Guard.NotNull(students, nameof(students));
 

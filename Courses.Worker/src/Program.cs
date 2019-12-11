@@ -43,10 +43,6 @@ namespace Courses.Worker {
                         .Use(new DbContext(connectionString, "courses_dev"));
 
                     registry
-                        .For<ICourseRepository>()
-                        .Use<CourseRepository>();
-
-                    registry
                         .ForSingletonOf<IHostedService>()
                         .Use<WorkerService>();
 
