@@ -15,7 +15,7 @@ namespace Courses.Api.Queries {
         }
     }
 
-     public class CourseSummaryListQueryHandler : IRequestHandler<CourseSummaryListQuery, IEnumerable<CourseSummaryListModel>> {
+    public class CourseSummaryListQueryHandler : IRequestHandler<CourseSummaryListQuery, IEnumerable<CourseSummaryListModel>> {
         public CourseSummaryListQueryHandler(DbContext context) {
             Guard.NotNull(context, nameof(context));
 

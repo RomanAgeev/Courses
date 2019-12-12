@@ -20,5 +20,16 @@ namespace Courses.Api.Controllers {
 
             return Ok(models);
         }
+
+        [HttpGet]
+        [Route("{courseTitle}")]
+        public async Task<IActionResult> GetCourse(string courseTitle) {
+            var model = await Mediator.Send(new CourseSummaryDetailQuery { CourseTitle = courseTitle } );
+
+            if (model == null)
+                return NotFound();
+
+            return Ok(model);
+        }
     }
 }
