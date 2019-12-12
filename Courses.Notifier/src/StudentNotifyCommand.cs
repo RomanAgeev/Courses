@@ -7,7 +7,7 @@ using Guards;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Courses.Notification {
+namespace Courses.Notifier {
     public class StudentNotifyCommand : IRequest<bool> {
         public class Validator : AbstractValidator<StudentNotifyCommand> {
             public Validator() {

@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Courses.Notification {
+namespace Courses.Notifier {
     class Program {
         static async Task<int> Main(string[] args) {
             Log.Logger = new LoggerConfiguration()
@@ -50,12 +50,12 @@ namespace Courses.Notification {
                     registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(Courses.Utils.ValidationBehavior<,>));
                     registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(LoggingBehavior<,>));
 
-                    registry.ForSingletonOf<IHostedService>().Use<NotificationService>();
+                    registry.ForSingletonOf<IHostedService>().Use<NotifierService>();
 
                     registry.For<IMessageReceiver>()
                         .Add(new MessageReceiver(Queues.Notify)).Named(Queues.LogIn);
 
-                    registry.ForConcreteType<NotificationService>().Configure
+                    registry.ForConcreteType<NotifierService>().Configure
                         .Ctor<MessageReceiver>().Named(Queues.LogIn);
                 })
                 .UseSerilog();

@@ -8,9 +8,9 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Courses.Notification {
-    public class NotificationService : BackgroundService {
-        public NotificationService(IMessageReceiver messageReceiver, IMediator mediator, ILogger<NotificationService> logger) {
+namespace Courses.Notifier {
+    public class NotifierService : BackgroundService {
+        public NotifierService(IMessageReceiver messageReceiver, IMediator mediator, ILogger<NotifierService> logger) {
             Guard.NotNull(messageReceiver, nameof(messageReceiver));
             Guard.NotNull(mediator, nameof(mediator));
             Guard.NotNull(logger, nameof(logger));
@@ -22,7 +22,7 @@ namespace Courses.Notification {
 
         readonly IMediator _mediator;
         readonly IMessageReceiver _messageReceiver;
-        readonly ILogger<NotificationService> _logger;
+        readonly ILogger<NotifierService> _logger;
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken) {
             stoppingToken.ThrowIfCancellationRequested();

@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Infrastructure", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Utils", "Lib\Courses.Utils\Courses.Utils.csproj", "{C689F7DE-ADF5-4629-8F27-887AB8D4F97E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Notification", "Courses.Notification\Courses.Notification.csproj", "{5EC0BB63-92A2-4AFA-8A46-BC29C6BCB6B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Notifier", "Courses.Notifier\Courses.Notifier.csproj", "{5EC0BB63-92A2-4AFA-8A46-BC29C6BCB6B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
