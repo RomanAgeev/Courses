@@ -56,8 +56,7 @@ namespace Courses.Api.Queries {
 
             var studentsId = document[Fields.CourseStudents]
                 .AsBsonArray
-                .Select(it => it.ToString())
-                .Select(it => ObjectId.Parse(it))
+                .Select(it => ObjectId.Parse(it.ToString()))
                 .ToList();
             
             var studentsFilter = Builders<BsonDocument>.Filter
