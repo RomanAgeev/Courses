@@ -27,26 +27,13 @@ namespace Courses.Infrastructure {
             if (document == null)
                 return null;
 
-            var student = new Student(
-                document[Fields.StudentName].ToString(),
-                document[Fields.StudentAge].ToInt32(),
-                document[Fields.StudentEmail].ToString());
-
-            student.InitId(document[Fields.Id].ToString());
-            student.InitVersion(document[Fields.Version].ToInt32());
-
-            return student;
+            return StudentBson.FromBson(document);
         }
 
         public async Task InsertStudentAsync(Student student) {
             Guard.NotNull(student, nameof(student));
 
-            var document = new BsonDocument {
-                { Fields.Version, student.Version },
-                { Fields.StudentName, student.Name },
-                { Fields.StudentAge, student.Age },
-                { Fields.StudentEmail, student.Email }
-            };
+            var document = student.ToBson();
 
             await _context.Students.InsertOneAsync(document);
         }

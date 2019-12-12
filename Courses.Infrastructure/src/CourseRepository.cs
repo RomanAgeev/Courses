@@ -29,28 +29,13 @@ namespace Courses.Infrastructure {
                 return null;
             }
 
-            var course = new Course(
-                document[Fields.CourseTitle].ToString(),
-                document[Fields.CourseTeacher].ToString(),
-                document[Fields.CourseCapacity].ToInt32());
-
-            course.InitId(document[Fields.Id].ToString());
-            course.InitVersion(document[Fields.Version].ToInt32());
-
-            return course;
+            return CourseBson.FromBson(document);
         }
 
         public async Task InsertCourseAsync(Course course) {
             Guard.NotNull(course, nameof(course));
 
-            var document = new BsonDocument {
-                { Fields.Version, course.Version },
-                { Fields.CourseTitle, course.Title },
-                { Fields.CourseTeacher, course.Teacher },
-                { Fields.CourseCapacity, course.Capacity },
-                { Fields.CourseSummary, new CourseSummary().ToBson() },
-                { Fields.CourseStudents, new BsonArray() }
-            };
+            var document = course.ToBson();
 
             await _context.Courses.InsertOneAsync(document); 
         }
@@ -61,34 +46,14 @@ namespace Courses.Infrastructure {
             var filter = Builders<BsonDocument>.Filter
                 .Eq(Fields.CourseTitle, courseTitle);
 
-            var project = Builders<BsonDocument>.Projection
-                .Include(Fields.Id)
-                .Include(Fields.Version)
-                .Include(Fields.CourseTitle)
-                .Include(Fields.CourseCapacity)
-                .Include(Fields.CourseStudents)
-                .Include(Fields.CourseSummary);
-
-
             var document = await _context.Courses
                 .Find(filter)
-                .Project(project)
                 .SingleOrDefaultAsync();
 
             if (document == null)
                 return null;
 
-            var summaryDocument = document[Fields.CourseSummary].ToBsonDocument();
-
-            var enrollment = new CourseEnrollment(
-                document[Fields.Id].ToString(),
-                document[Fields.Version].ToInt32(),
-                document[Fields.CourseTitle].ToString(),
-                document[Fields.CourseCapacity].ToInt32(),
-                document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString()),
-                CourseSummaryMongoExtensions.FromBson(summaryDocument));
-
-            return enrollment;
+            return CourseEnrollmentBson.FromBson(document);
         }
         
         public async Task<bool> SetCourseEnrollmentAsync(int version, CourseEnrollment enrollment) {
