@@ -13,6 +13,7 @@ namespace Courses.Api.Commands {
         }
 
         public Task<bool> Handle(StudentEnrollCommandV1 command, CancellationToken ct) {
+            // TODO: Implement direct access to data
             return Task.FromResult(true);
         }
     }

@@ -63,11 +63,14 @@ namespace Courses.Notifier {
 
                     registry.ForSingletonOf<IHostedService>().Use<NotifierService>();
 
+                    string messagingHost = context.Configuration.GetValue("Messaging:Host", "lolcahost");
+                    string queueNotify = context.Configuration.GetValue("Messaging:QueueNotify", "");
+
                     registry.For<IMessageReceiver>()
-                        .Add(new MessageReceiver(Queues.Notify)).Named(Queues.LogIn);
+                        .Add(new MessageReceiver(messagingHost, queueNotify)).Named(queueNotify);
 
                     registry.ForConcreteType<NotifierService>().Configure
-                        .Ctor<MessageReceiver>().Named(Queues.LogIn);
+                        .Ctor<MessageReceiver>().Named(queueNotify);
                 })
                 .ConfigureLogging((context, logging) => {
                     Log.Logger = new LoggerConfiguration()

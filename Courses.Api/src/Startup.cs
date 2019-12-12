@@ -48,11 +48,14 @@ namespace Courses.Api {
             registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(ValidationBehavior<,>));
             registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(LoggingBehavior<,>));
 
+            string messagingHost = Configuration.GetValue("Messaging:Host", "localhost");
+            string queueEnroll = Configuration.GetValue("Messaging:QueueEnroll", "");
+
             registry.For<IMessageSender>()
-                .Add(new MessageSender(Queues.LogIn)).Named(Queues.LogIn);
+                .Add(new MessageSender(messagingHost, queueEnroll)).Named(queueEnroll);
 
             registry.ForConcreteType<StudentEnrollCommandHandlerV2>().Configure
-                .Ctor<IMessageSender>().Named(Queues.LogIn);
+                .Ctor<IMessageSender>().Named(queueEnroll);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {

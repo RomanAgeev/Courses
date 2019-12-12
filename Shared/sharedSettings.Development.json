@@ -6,5 +6,8 @@
     },
     "ConnectionStrings": {
         "CoursesConnection": "mongodb://dev:dev@localhost:27017/courses_dev"
+    },
+    "Messaging": {
+        "Host": "localhsot"
     }
 }

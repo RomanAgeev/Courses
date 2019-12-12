@@ -7,5 +7,9 @@
                 "System": "Error"
             }
         }
+    },
+    "Messaging": {
+        "QueueEnroll": "Queue_Enroll",
+        "QueueNotify": "Queue_Notify"
     }
 }

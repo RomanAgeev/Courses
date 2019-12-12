@@ -69,15 +69,19 @@ namespace Courses.Worker {
                     registry.ForSingletonOf<DbContext>().Use(new DbContext(connectionString));
 
                     registry.ForSingletonOf<IHostedService>().Use<WorkerService>();
+                    
+                    string messagingHost = context.Configuration.GetValue("Messaging:Host", "lolcahost");
+                    string queueEnroll = context.Configuration.GetValue("Messaging:QueueEnroll", "");
+                    string queueNotify = context.Configuration.GetValue("Messaging:QueueNotify", "");
 
-                    registry.For<IMessageReceiver>().Add(new MessageReceiver(Queues.LogIn)).Named(Queues.LogIn);
-                    registry.For<IMessageSender>().Add(new MessageSender(Queues.Notify)).Named(Queues.Notify);
+                    registry.For<IMessageReceiver>().Add(new MessageReceiver(messagingHost, queueEnroll)).Named(queueEnroll);
+                    registry.For<IMessageSender>().Add(new MessageSender(messagingHost, queueNotify)).Named(queueNotify);
 
                     registry.ForConcreteType<WorkerService>().Configure
-                        .Ctor<MessageReceiver>().Named(Queues.LogIn);
+                        .Ctor<MessageReceiver>().Named(queueEnroll);
 
                     registry.ForConcreteType<StudentEnrollCommand>().Configure
-                        .Ctor<MessageSender>("messageSender").Named(Queues.Notify);
+                        .Ctor<MessageSender>("messageSender").Named(queueNotify);
                 })
                 .ConfigureLogging((context, logging) => {
                     Log.Logger = new LoggerConfiguration()

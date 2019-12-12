@@ -10,12 +10,13 @@ namespace Courses.Utils {
     }
 
     public class MessageSender : IMessageSender {
-        public MessageSender(string queueName) {
+        public MessageSender(string hostName, string queueName) {
+            Guard.NotNullOrEmpty(hostName, nameof(hostName));
             Guard.NotNullOrEmpty(queueName, nameof(queueName));
 
             _queueName = queueName;
 
-            var factory = new ConnectionFactory { HostName = "localhost" };
+            var factory = new ConnectionFactory { HostName = hostName };
 
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
