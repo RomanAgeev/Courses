@@ -1,26 +1,20 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Courses.Utils;
 using FluentValidation;
 using Lamar;
 using Lamar.Microsoft.DependencyInjection;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Courses.Notifier {
     class Program {
         static async Task<int> Main(string[] args) {
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
-            var hostBuiler = CreateHostBuilder();
-
              try {
-                Log.Information("Courses.Notifier service is starting...");
-                await hostBuiler.RunConsoleAsync();
+                await CreateHostBuilder().RunConsoleAsync();
                 return 0;
 
             } catch(Exception e) {
@@ -34,6 +28,23 @@ namespace Courses.Notifier {
 
         public static IHostBuilder CreateHostBuilder() =>
             new HostBuilder()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureHostConfiguration(config => {
+                    config.AddEnvironmentVariables(prefix: "DOTNETCORE_");
+                })
+                .ConfigureAppConfiguration((hostingContext, config) =>{
+                    var env = hostingContext.HostingEnvironment;
+
+                    var sharedFolder = Path.Combine(env.ContentRootPath, "..", "Shared");
+
+                    const string shared = "sharedSettings";
+
+                    config
+                        .AddJsonFile(Path.Combine(sharedFolder, $"{shared}.json"), optional: true)
+                        .AddJsonFile(Path.Combine(sharedFolder, $"{shared}.{env.EnvironmentName}.json"), optional: true);
+
+                    config.AddEnvironmentVariables();
+                })
                 .UseLamar((context, registry) => {
                     registry.Scan(it => {
                         it.TheCallingAssembly();
@@ -57,6 +68,15 @@ namespace Courses.Notifier {
 
                     registry.ForConcreteType<NotifierService>().Configure
                         .Ctor<MessageReceiver>().Named(Queues.LogIn);
+                })
+                .ConfigureLogging((context, logging) => {
+                    Log.Logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(context.Configuration)
+                        .Enrich.FromLogContext()
+                        .WriteTo.ColoredConsole()
+                        .CreateLogger();
+
+                    Log.Information("Courses.Notifier service is starting...");
                 })
                 .UseSerilog();
 

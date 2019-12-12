@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Courses.Db;
 using Courses.Utils;
@@ -6,22 +7,15 @@ using FluentValidation;
 using Lamar;
 using Lamar.Microsoft.DependencyInjection;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Courses.Worker {
     class Program {
         static async Task<int> Main(string[] args) {
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.ColoredConsole()
-                .CreateLogger();
-
-            var hostBuiler = CreateHostBuilder();
-
              try {
-                Log.Information("Courses.Api service is starting...");
-                await hostBuiler.RunConsoleAsync();
+                await CreateHostBuilder().RunConsoleAsync();
                 return 0;
 
             } catch(Exception e) {
@@ -35,6 +29,23 @@ namespace Courses.Worker {
 
         public static IHostBuilder CreateHostBuilder() =>
             new HostBuilder()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .ConfigureHostConfiguration(config => {
+                    config.AddEnvironmentVariables(prefix: "DOTNETCORE_");
+                })
+                .ConfigureAppConfiguration((hostingContext, config) =>{
+                    var env = hostingContext.HostingEnvironment;
+
+                    var sharedFolder = Path.Combine(env.ContentRootPath, "..", "Shared");
+
+                    const string shared = "sharedSettings";
+
+                    config
+                        .AddJsonFile(Path.Combine(sharedFolder, $"{shared}.json"), optional: true)
+                        .AddJsonFile(Path.Combine(sharedFolder, $"{shared}.{env.EnvironmentName}.json"), optional: true);
+
+                    config.AddEnvironmentVariables();
+                })
                 .UseLamar((context, registry) => {
                     registry.Scan(it => {
                         it.TheCallingAssembly();
@@ -52,10 +63,10 @@ namespace Courses.Worker {
 
                     registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(Courses.Utils.ValidationBehavior<,>));
                     registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(LoggingBehavior<,>));
+                    
+                    string connectionString = context.Configuration.GetConnectionString("CoursesConnection");
 
-                    string connectionString = "mongodb://dev:dev@localhost:27017/courses_dev";
-
-                    registry.ForSingletonOf<DbContext>().Use(new DbContext(connectionString, "courses_dev"));
+                    registry.ForSingletonOf<DbContext>().Use(new DbContext(connectionString));
 
                     registry.ForSingletonOf<IHostedService>().Use<WorkerService>();
 
@@ -67,6 +78,15 @@ namespace Courses.Worker {
 
                     registry.ForConcreteType<StudentEnrollCommand>().Configure
                         .Ctor<MessageSender>("messageSender").Named(Queues.Notify);
+                })
+                .ConfigureLogging((context, logging) => {
+                    Log.Logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(context.Configuration)
+                        .Enrich.FromLogContext()
+                        .WriteTo.ColoredConsole()
+                        .CreateLogger();
+
+                    Log.Information("Courses.Api service is starting...");
                 })
                 .UseSerilog();
     }

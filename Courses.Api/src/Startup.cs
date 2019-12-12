@@ -34,9 +34,9 @@ namespace Courses.Api {
                 it.ConnectImplementationsToTypesClosing(typeof(AbstractValidator<>));
             });
 
-            string connectionString = "mongodb://dev:dev@localhost:27017/courses_dev";
+            string connectionString = Configuration.GetConnectionString("CoursesConnection");
 
-            registry.ForSingletonOf<DbContext>().Use(new DbContext(connectionString, "courses_dev"));
+            registry.ForSingletonOf<DbContext>().Use(new DbContext(connectionString));
 
             registry.For(typeof(AbstractValidator<StudentEnrollCommandV1>)).Use(typeof(StudentEnrollCommandV1.Validator));
             registry.For(typeof(AbstractValidator<StudentEnrollCommandV2>)).Use(typeof(StudentEnrollCommandV2.Validator));

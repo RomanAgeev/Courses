@@ -1,0 +1,10 @@
+{
+    "Serilog": {
+        "MinimumLevel": {
+          "Default": "Debug"
+        }
+    },
+    "ConnectionStrings": {
+        "CoursesConnection": "mongodb://dev:dev@localhost:27017/courses_dev"
+    }
+}

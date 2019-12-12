@@ -29,13 +29,13 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Courses.Notification",
+            "name": "Courses.Notifier",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Courses.Notification/bin/Debug/netcoreapp2.2/Courses.Notification.dll",
+            "program": "${workspaceFolder}/Courses.Notifier/bin/Debug/netcoreapp2.2/Courses.Notifier.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Courses.Notification",
+            "cwd": "${workspaceFolder}/Courses.Notifier",
             "console": "internalConsole",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"

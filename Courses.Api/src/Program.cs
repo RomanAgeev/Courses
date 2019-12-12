@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Core;
 
 namespace Courses.Api {
     public class Program {
@@ -40,6 +35,22 @@ namespace Courses.Api {
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>{
+                    var env = hostingContext.HostingEnvironment;
+
+                    var sharedFolder = Path.Combine(env.ContentRootPath, "..", "Shared");
+
+                    const string app = "appsettings";
+                    const string shared = "sharedSettings";
+
+                    config
+                        .AddJsonFile(Path.Combine(sharedFolder, $"{shared}.json"), optional: true)
+                        .AddJsonFile(Path.Combine(sharedFolder, $"{shared}.{env.EnvironmentName}.json"), optional: true)
+                        .AddJsonFile($"{app}.json", optional: true)
+                        .AddJsonFile($"{app}.{env.EnvironmentName}.json", optional: true);
+
+                    config.AddEnvironmentVariables();
+                })
                 .UseStartup<Startup>()
                 .UseLamar()
                 .UseSerilog()
