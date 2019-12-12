@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Courses.Domain;
 using Courses.Utils;
-using Courses.Worker.Commands;
 using Guards;
 using MediatR;
 using FluentValidation;
@@ -26,7 +25,7 @@ namespace Courses.Worker {
         protected override Task ExecuteAsync(CancellationToken stoppingToken) {
             stoppingToken.ThrowIfCancellationRequested();
 
-            _messageReceiver.Subscribe<StudentLogInCommand>(async command => {
+            _messageReceiver.Subscribe<StudentEnrollCommand>(async command => {
                 try {
                     await _mediator.Send(command);
                 } catch (DomainException e) {

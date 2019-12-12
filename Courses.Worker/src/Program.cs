@@ -1,8 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Courses.Domain;
 using Courses.Infrastructure;
 using Courses.Utils;
-using Courses.Worker.Commands;
 using FluentValidation;
 using Lamar;
 using Lamar.Microsoft.DependencyInjection;
@@ -63,7 +61,7 @@ namespace Courses.Worker {
                         .Named(Queues.LogIn);
 
                     registry
-                        .ForConcreteType<StudentLogInCommand>()
+                        .ForConcreteType<StudentEnrollCommand>()
                         .Configure
                         .Ctor<MessageSender>("messageSender")
                         .Named(Queues.Notify);

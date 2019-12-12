@@ -7,9 +7,9 @@ using FluentValidation;
 using Guards;
 using MediatR;
 
-namespace Courses.Worker.Commands {
-    public class StudentLogInCommand : IRequest<bool> {
-        public class Validator : AbstractValidator<StudentLogInCommand> {
+namespace Courses.Worker {
+    public class StudentEnrollCommand : IRequest<bool> {
+        public class Validator : AbstractValidator<StudentEnrollCommand> {
             public Validator() {
                 RuleFor(it => it.StudentEmail)
                     .NotNull()
@@ -24,7 +24,7 @@ namespace Courses.Worker.Commands {
         public string CourseTitle { get; set; }
     }
 
-    public class StudentLogInCommandHandler : IRequestHandler<StudentLogInCommand, bool> {
+    public class StudentLogInCommandHandler : IRequestHandler<StudentEnrollCommand, bool> {
         public StudentLogInCommandHandler(ICourseRepository courses, IStudentRepository students, IMessageSender messageSender) {
             Guard.NotNull(courses, nameof(courses));
             Guard.NotNull(students, nameof(students));
@@ -39,7 +39,7 @@ namespace Courses.Worker.Commands {
         readonly IStudentRepository _students;
         readonly IMessageSender _messageSender;
 
-        public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
+        public async Task<bool> Handle(StudentEnrollCommand command, CancellationToken ct) {
             string error = null;
 
             try {
@@ -57,7 +57,7 @@ namespace Courses.Worker.Commands {
             return true;
         }
 
-        async Task EnrollStudent(StudentLogInCommand command) {
+        async Task EnrollStudent(StudentEnrollCommand command) {
             Student student = await _students.GetStudentAsync(command.StudentEmail);
             if (student == null) {
                 throw new DomainException($"Student email '{command.StudentEmail}' doens't exist");
