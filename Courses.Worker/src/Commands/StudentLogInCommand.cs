@@ -40,40 +40,42 @@ namespace Courses.Worker.Commands {
         readonly IMessageSender _messageSender;
 
         public async Task<bool> Handle(StudentLogInCommand command, CancellationToken ct) {
+            string error = null;
+
+            try {
+                await EnrollStudent(command);
+            } catch (DomainException e) {
+                error = e.Message;
+            }
+            
+            _messageSender.SendMessage(new {
+                CourseTitle = command.CourseTitle,
+                StudentEmail = command.StudentEmail,
+                Error = error
+            });
+            
+            return true;
+        }
+
+        async Task EnrollStudent(StudentLogInCommand command) {
             Student student = await _students.GetStudentAsync(command.StudentEmail);
             if (student == null) {
-                throw new Exception("TODO");
+                throw new DomainException($"Student email '{command.StudentEmail}' doens't exist");
             }
 
             bool suceed;
-            string result = LogInResults.Succeed;
-
             do {
                 CourseEnrollment enrollment = await _courses.GetCourseEnrollmentAsync(command.CourseTitle);
                 if (enrollment == null) {
-                    throw new Exception("TODO");
+                    throw new DomainException($"Course {command.CourseTitle} doesn't exist");
                 }
 
                 int version = enrollment.CourseVersion;
 
-                try {
-                    enrollment.AddStudent(student.Id);
-                } catch {
-                    result = LogInResults.NoCourseCapacity;
-                    break;
-                }
+                enrollment.AddStudent(student);
 
                 suceed = await _courses.SetCourseEnrollmentAsync(version, enrollment);
             } while(!suceed);
-
-            _messageSender.SendMessage(new {
-                LogInResult = result,
-                CourseTitle = command.CourseTitle,
-                StudentName = student.Name,
-                StudentEmail = command.StudentEmail
-            });
-            
-            return true;
         }
     }
 }

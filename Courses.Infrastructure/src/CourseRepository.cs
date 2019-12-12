@@ -63,6 +63,7 @@ namespace Courses.Infrastructure {
             var project = Builders<BsonDocument>.Projection
                 .Include(Fields.Id)
                 .Include(Fields.Version)
+                .Include(Fields.CourseTitle)
                 .Include(Fields.CourseCapacity)
                 .Include(Fields.CourseStudents);
 
@@ -77,6 +78,7 @@ namespace Courses.Infrastructure {
             var enrollment = new CourseEnrollment(
                 document[Fields.Id].ToString(),
                 document[Fields.Version].ToInt32(),
+                document[Fields.CourseTitle].ToString(),
                 document[Fields.CourseCapacity].ToInt32(),
                 document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString()));
 

@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Courses.Utils;
 using Guards;
 using MediatR;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 namespace Courses.Notification {
     public class NotificationService : BackgroundService {
@@ -21,9 +23,12 @@ namespace Courses.Notification {
         protected override Task ExecuteAsync(CancellationToken stoppingToken) {
             stoppingToken.ThrowIfCancellationRequested();
 
-            _messageReceiver.Subscribe(messageBody => {
-                var command = Helpers.DeserializeObject<StudentNotifyCommand>(messageBody);
-                Task.Run(() => _mediator.Send(command)).Wait();
+            _messageReceiver.Subscribe<StudentNotifyCommand>(async command => {
+                try {
+                    await _mediator.Send(command);
+                } catch (ValidationException e) {
+                    System.Console.WriteLine(e.Errors.Select(it => it.ErrorMessage).ToArray());
+                }
             });
 
             return Task.CompletedTask;

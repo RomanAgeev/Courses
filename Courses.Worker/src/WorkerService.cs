@@ -1,10 +1,14 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Courses.Domain;
 using Courses.Utils;
 using Courses.Worker.Commands;
 using Guards;
 using MediatR;
+using FluentValidation;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
 
 namespace Courses.Worker {
     public class WorkerService : BackgroundService {
@@ -22,10 +26,14 @@ namespace Courses.Worker {
         protected override Task ExecuteAsync(CancellationToken stoppingToken) {
             stoppingToken.ThrowIfCancellationRequested();
 
-            _messageReceiver.Subscribe(messageBody => {
-                System.Console.WriteLine("HANDLED");
-                var command = Helpers.DeserializeObject<StudentLogInCommand>(messageBody);
-                Task.Run(() => _mediator.Send(command)).Wait();
+            _messageReceiver.Subscribe<StudentLogInCommand>(async command => {
+                try {
+                    await _mediator.Send(command);
+                } catch (DomainException e) {
+                    System.Console.WriteLine(e.Message);
+                } catch (ValidationException e) {
+                    System.Console.WriteLine(e.Errors.Select(it => it.ErrorMessage).ToArray());
+                }
             });
 
             return Task.CompletedTask;
