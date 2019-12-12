@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Courses.Utils\Courses.Utils.csproj" />
+    <ProjectReference Include="..\Lib\Courses.Utils\Courses.Utils.csproj" />
   </ItemGroup>
 
 </Project>

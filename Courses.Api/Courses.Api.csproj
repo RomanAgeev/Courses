@@ -21,9 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Courses.Domain\Courses.Domain.csproj" />
-    <ProjectReference Include="..\Courses.Infrastructure\Courses.Infrastructure.csproj" />
-    <ProjectReference Include="..\Courses.Utils\Courses.Utils.csproj" />
+    <ProjectReference Include="..\Lib\Courses.Domain\Courses.Domain.csproj" />
+    <ProjectReference Include="..\Lib\Courses.Infrastructure\Courses.Infrastructure.csproj" />
+    <ProjectReference Include="..\Lib\Courses.Utils\Courses.Utils.csproj" />
   </ItemGroup>
 
 </Project>
