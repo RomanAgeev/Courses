@@ -10,7 +10,7 @@ namespace Courses.Utils {
     }
 
     public class MessageReceiver : IMessageReceiver {
-        public MessageReceiver(string queueName) {
+        public MessageReceiver(string queueName ) {
             Guard.NotNullOrEmpty(queueName, nameof(queueName));
 
             _queueName = queueName;

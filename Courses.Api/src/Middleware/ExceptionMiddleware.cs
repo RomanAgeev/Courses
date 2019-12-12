@@ -26,18 +26,22 @@ namespace Courses.Api.Middleware {
                 await _next(context);
 
             } catch(ValidationException e) {
-                // _logger.WarningException(e, cause);
+                const string cause = "Validation";
+
+                _logger.LogWarning(e, cause);
 
                 await HandleServerError(context, HttpStatusCode.BadRequest, new {
-                    cause = "Validation",
+                    cause,
                     errors = e.Errors.Select(it => it.ErrorMessage).ToArray()
                 });
 
             } catch(DomainException e) {
-                // _logger.WarningException(e, cause);
+                const string cause = "Domain Logic";
+
+                _logger.LogWarning(e, cause);
 
                 await HandleServerError(context, HttpStatusCode.BadRequest, new {
-                    cause = "Domain Logic",
+                    cause,
                     errors = new[] { e.Message }
                 });
             }

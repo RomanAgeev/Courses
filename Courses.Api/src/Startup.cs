@@ -36,51 +36,26 @@ namespace Courses.Api {
 
             string connectionString = "mongodb://dev:dev@localhost:27017/courses_dev";
 
-            registry
-                .ForSingletonOf<DbContext>()
-                .Use(new DbContext(connectionString, "courses_dev"));
+            registry.ForSingletonOf<DbContext>().Use(new DbContext(connectionString, "courses_dev"));
 
-            registry
-                .For(typeof(AbstractValidator<StudentEnrollCommandV1>))
-                .Use(typeof(StudentEnrollCommandV1.Validator));
-            
-            registry
-                .For(typeof(AbstractValidator<StudentEnrollCommandV2>))
-                .Use(typeof(StudentEnrollCommandV2.Validator));
+            registry.For(typeof(AbstractValidator<StudentEnrollCommandV1>)).Use(typeof(StudentEnrollCommandV1.Validator));
+            registry.For(typeof(AbstractValidator<StudentEnrollCommandV2>)).Use(typeof(StudentEnrollCommandV2.Validator));
 
-            registry
-                .For<ServiceFactory>()
-                .Use(ctx => ctx.GetInstance);
+            registry.For<ServiceFactory>().Use(ctx => ctx.GetInstance);
 
-            registry
-                .For<IMediator>()
-                .Use<Mediator>();
+            registry.For<IMediator>().Use<Mediator>();
 
-            registry
-                .For(typeof(IPipelineBehavior<,>))
-                .Use(typeof(Courses.Utils.ValidationBehavior<,>));
+            registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(ValidationBehavior<,>));
+            registry.For(typeof(IPipelineBehavior<,>)).Use(typeof(LoggingBehavior<,>));
 
-            registry
-                .For<IMessageSender>()
-                .Add(new MessageSender(Queues.LogIn))
-                .Named(Queues.LogIn);
+            registry.For<IMessageSender>()
+                .Add(new MessageSender(Queues.LogIn)).Named(Queues.LogIn);
 
-            registry
-                .ForConcreteType<StudentEnrollCommandHandlerV2>()
-                .Configure
-                .Ctor<IMessageSender>()
-                .Named(Queues.LogIn);
+            registry.ForConcreteType<StudentEnrollCommandHandlerV2>().Configure
+                .Ctor<IMessageSender>().Named(Queues.LogIn);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-            // if (env.IsDevelopment()) {
-            //     app.UseDeveloperExceptionPage();
-            // }
-            // else {
-            //     app.UseHsts();
-            // }
-
-            // app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseMvc();
         }
