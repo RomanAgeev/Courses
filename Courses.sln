@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Utils", "Lib\Course
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Notifier", "Courses.Notifier\Courses.Notifier.csproj", "{5EC0BB63-92A2-4AFA-8A46-BC29C6BCB6B6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{6632E88B-2A86-4AFF-A1D4-9FFE2C562EF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Domain.Tests", "Lib\Courses.Domain.Tests\Courses.Domain.Tests.csproj", "{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,5 +104,20 @@ Global
 		{5EC0BB63-92A2-4AFA-8A46-BC29C6BCB6B6}.Release|x64.Build.0 = Release|Any CPU
 		{5EC0BB63-92A2-4AFA-8A46-BC29C6BCB6B6}.Release|x86.ActiveCfg = Release|Any CPU
 		{5EC0BB63-92A2-4AFA-8A46-BC29C6BCB6B6}.Release|x86.Build.0 = Release|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Debug|x64.Build.0 = Debug|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Debug|x86.Build.0 = Debug|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|x64.ActiveCfg = Release|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|x64.Build.0 = Release|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|x86.ActiveCfg = Release|Any CPU
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D} = {6632E88B-2A86-4AFF-A1D4-9FFE2C562EF2}
 	EndGlobalSection
 EndGlobal
