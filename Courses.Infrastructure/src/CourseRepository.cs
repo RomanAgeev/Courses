@@ -48,6 +48,7 @@ namespace Courses.Infrastructure {
                 { Fields.CourseTitle, course.Title },
                 { Fields.CourseTeacher, course.Teacher },
                 { Fields.CourseCapacity, course.Capacity },
+                { Fields.CourseSummary, new CourseSummary().ToBson() },
                 { Fields.CourseStudents, new BsonArray() }
             };
 
@@ -65,7 +66,9 @@ namespace Courses.Infrastructure {
                 .Include(Fields.Version)
                 .Include(Fields.CourseTitle)
                 .Include(Fields.CourseCapacity)
-                .Include(Fields.CourseStudents);
+                .Include(Fields.CourseStudents)
+                .Include(Fields.CourseSummary);
+
 
             var document = await _context.Courses
                 .Find(filter)
@@ -75,12 +78,15 @@ namespace Courses.Infrastructure {
             if (document == null)
                 return null;
 
+            var summaryDocument = document[Fields.CourseSummary].ToBsonDocument();
+
             var enrollment = new CourseEnrollment(
                 document[Fields.Id].ToString(),
                 document[Fields.Version].ToInt32(),
                 document[Fields.CourseTitle].ToString(),
                 document[Fields.CourseCapacity].ToInt32(),
-                document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString()));
+                document[Fields.CourseStudents].AsBsonArray.Select(it => it.ToString()),
+                CourseSummaryMongoExtensions.FromBson(summaryDocument));
 
             return enrollment;
         }
@@ -98,7 +104,8 @@ namespace Courses.Infrastructure {
 
             var update = Builders<BsonDocument>.Update
                 .Set(Fields.CourseStudents, enrollment.Students)
-                .Set(Fields.Version, enrollment.CourseVersion);
+                .Set(Fields.Version, enrollment.CourseVersion)
+                .Set(Fields.CourseSummary, enrollment.Summary.ToBson());
 
             UpdateResult result = await _context.Courses.UpdateOneAsync(filter, update);
 

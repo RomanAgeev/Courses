@@ -13,6 +13,7 @@ namespace Courses.Infrastructure {
             CourseTeacher = "teacher",
             CourseCapacity = "capacity",
             CourseStudents = "students",
+            CourseSummary = "summary",
             StudentName = "name",
             StudentEmail = "email",
             StudentAge = "age";
