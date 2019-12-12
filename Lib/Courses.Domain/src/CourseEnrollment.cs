@@ -14,41 +14,40 @@ namespace Courses.Domain {
             Guard.NotNull(students, nameof(students));
             Guard.NotNull(summary, nameof(summary));
 
-            _courseId = courseId;
-            _courseVersion = courseVersion;
-            _courseTitle = courseTitle;
-            _capacity = capacity;
+            CourseId = courseId;
+            CourseVersion = courseVersion;
+            CourseTitle = courseTitle;
+            Capacity = capacity;
+            Summary = summary;
+
             _students = new List<string>(students);
-            _summary = summary;
         }
 
-        readonly string _courseId;
-        int _courseVersion;
-        readonly string _courseTitle;
-        readonly int _capacity;
         readonly List<string> _students;
-        readonly CourseSummary _summary;
         
-        public string CourseId => _courseId;
-        public int CourseVersion => _courseVersion;
-        public int Capacity => _capacity;
+        public string CourseId { get; }
+        public int CourseVersion { get; private set;}
+        public string CourseTitle { get; private set; }
+        public int Capacity { get; private set; }
+        public CourseSummary Summary { get; }
+
         public IReadOnlyCollection<string> Students => _students.AsReadOnly();
-        public CourseSummary Summary => _summary;
 
         public void AddStudent(Student student) {
             Guard.NotNull(student, nameof(student));
 
-            if (_capacity == _students.Count) {
-                throw new DomainException($"Course '{_courseTitle}' capacity {_capacity} is exceeded");
+            if (Capacity == _students.Count) {
+                throw new DomainException($"Course '{CourseTitle}' capacity {Capacity} is exceeded");
             }
 
             if (_students.Contains(student.Id))
-                throw new DomainException($"Student '{student.Name}' is already in the '{_courseTitle}' coures");
+                throw new DomainException($"Student '{student.Name}' is already in the '{CourseTitle}' coures");
 
             _students.Add(student.Id);
-            _summary.AddStudent(student.Age);
 
-            _courseVersion++;
+            Summary.AddStudent(student.Age);
+
+            CourseVersion++;
         }
     }
 }

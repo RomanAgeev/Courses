@@ -91,7 +91,7 @@ namespace Courses.Db {
             var update = Builders<BsonDocument>.Update
                 .Set(Fields.CourseStudents, enrollment.Students)
                 .Set(Fields.Version, enrollment.CourseVersion)
-                .Set(Fields.CourseSummary, enrollment.Summary.ToBson());
+                .Set(Fields.CourseSummary, enrollment.Summary.ToCourseSummaryBson());
 
             UpdateResult result = await _context.Courses.UpdateOneAsync(filter, update);
 
