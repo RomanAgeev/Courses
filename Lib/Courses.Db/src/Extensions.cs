@@ -2,7 +2,7 @@ using System.Linq;
 using Courses.Domain;
 using MongoDB.Bson;
 
-namespace Courses.Infrastructure {
+namespace Courses.Db {
     public static class StudentBson {
         public static BsonDocument ToBson(this Student student) =>
             new BsonDocument {

@@ -1,6 +1,6 @@
 ﻿using Courses.Api.Commands;
 using Courses.Api.Middleware;
-using Courses.Infrastructure;
+using Courses.Db;
 using Courses.Utils;
 using FluentValidation;
 using Lamar;
@@ -27,7 +27,7 @@ namespace Courses.Api {
             registry.Scan(it => {
                 it.TheCallingAssembly();
                 it.AssemblyContainingType<Courses.Domain.IAssemblyFinder>();
-                it.AssemblyContainingType<Courses.Infrastructure.IAssemblyFinder>();
+                it.AssemblyContainingType<Courses.Db.IAssemblyFinder>();
                 it.AssemblyContainingType<Courses.Utils.IAssemblyFinder>();
                 it.WithDefaultConventions();
                 it.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Worker", "Courses.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Domain", "Lib\Courses.Domain\Courses.Domain.csproj", "{6CC599AE-C75D-48EA-9391-416E65BF8787}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Infrastructure", "Lib\Courses.Infrastructure\Courses.Infrastructure.csproj", "{CE1B056D-DAE4-42C7-8DDB-4BD792DF06FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Db", "Lib\Courses.Db\Courses.Db.csproj", "{CE1B056D-DAE4-42C7-8DDB-4BD792DF06FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Utils", "Lib\Courses.Utils\Courses.Utils.csproj", "{C689F7DE-ADF5-4629-8F27-887AB8D4F97E}"
 EndProject

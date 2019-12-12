@@ -1,4 +1,4 @@
-namespace Courses.Infrastructure {
+namespace Courses.Db {
     public static class Collections {
         public const string
             Courses = "courses",

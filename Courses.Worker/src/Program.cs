@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Courses.Infrastructure;
+using Courses.Db;
 using Courses.Utils;
 using FluentValidation;
 using Lamar;
@@ -39,7 +39,7 @@ namespace Courses.Worker {
                     registry.Scan(it => {
                         it.TheCallingAssembly();
                         it.AssemblyContainingType<Courses.Domain.IAssemblyFinder>();
-                        it.AssemblyContainingType<Courses.Infrastructure.IAssemblyFinder>();
+                        it.AssemblyContainingType<Courses.Db.IAssemblyFinder>();
                         it.AssemblyContainingType<Courses.Utils.IAssemblyFinder>();
                         it.WithDefaultConventions();
                         it.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));

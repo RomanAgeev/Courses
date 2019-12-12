@@ -4,7 +4,7 @@ using Guards;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Courses.Infrastructure {
+namespace Courses.Db {
     public class StudentRepository : IStudentRepository {
         public StudentRepository(DbContext context) {
             Guard.NotNull(context, nameof(context));

@@ -2,7 +2,7 @@ using Guards;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Courses.Infrastructure {
+namespace Courses.Db {
     public class DbContext {
         public DbContext(string connectionString, string databaseName) {
             Guard.NotNullOrEmpty(connectionString, nameof(connectionString));
