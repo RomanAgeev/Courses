@@ -27,13 +27,22 @@ namespace Courses.Db {
             if (document == null)
                 return null;
 
-            return StudentBson.FromBson(document);
+            var student = new Student(
+                email:  FromBson.GetStudentEmail(document),
+                name:   FromBson.GetStudentName(document),
+                age:    FromBson.GetStudentAge(document)
+            );
+
+            student.InitId(FromBson.GetId(document));
+            student.InitVersion(FromBson.GetVersion(document));
+
+            return student;
         }
 
         public async Task InsertStudentAsync(Student student) {
             Guard.NotNull(student, nameof(student));
 
-            var document = student.ToBson();
+            var document = student.ToStudentBson();
 
             await _context.Students.InsertOneAsync(document);
         }

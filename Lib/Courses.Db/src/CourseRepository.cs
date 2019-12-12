@@ -29,13 +29,22 @@ namespace Courses.Db {
                 return null;
             }
 
-            return CourseBson.FromBson(document);
+            var course = new Course(
+                title:      FromBson.GetCourseTitle(document),
+                teacher:    FromBson.GetCourseTeacher(document),
+                capacity:   FromBson.GetCourseCapacity(document)
+            );
+
+            course.InitId(FromBson.GetId(document));
+            course.InitVersion(FromBson.GetVersion(document));
+
+            return course;
         }
 
         public async Task InsertCourseAsync(Course course) {
             Guard.NotNull(course, nameof(course));
 
-            var document = course.ToBson();
+            var document = course.ToCourseBson();
 
             await _context.Courses.InsertOneAsync(document); 
         }
@@ -53,7 +62,22 @@ namespace Courses.Db {
             if (document == null)
                 return null;
 
-            return CourseEnrollmentBson.FromBson(document);
+            BsonDocument summaryDoc = FromBson.GetSummaryDocument(document);
+
+            return new CourseEnrollment(
+                courseId:       FromBson.GetId(document),
+                courseVersion:  FromBson.GetVersion(document),
+                courseTitle:    FromBson.GetCourseTitle(document),
+                capacity:       FromBson.GetCourseCapacity(document),
+                students:       FromBson.GetCourseStudents(document),
+                summary:        new CourseSummary(
+                    ageMin:         FromBson.GetSummaryMin(summaryDoc),
+                    ageMax:         FromBson.GetSummaryMax(summaryDoc),
+                    ageSum:         FromBson.GetSummarySum(summaryDoc),
+                    ageAvg:         FromBson.GetSummaryAvg(summaryDoc),
+                    studentCount:   FromBson.GetSummaryStudentCount(summaryDoc)
+                )
+            );
         }
         
         public async Task<bool> SetCourseEnrollmentAsync(int version, CourseEnrollment enrollment) {

@@ -49,14 +49,8 @@ namespace Courses.Api.Queries {
             if (document == null)
                 return null;
 
-            var summaryDocument = document[Fields.CourseSummary].ToBsonDocument();
-
-            int studentCount = summaryDocument[Fields.StudentCount].ToInt32();
-            int ageSum = summaryDocument[Fields.AgeSum].ToInt32();
-
-            var studentsId = document[Fields.CourseStudents]
-                .AsBsonArray
-                .Select(it => ObjectId.Parse(it.ToString()))
+            var studentsId = FromBson.GetCourseStudents(document)
+                .Select(id => ObjectId.Parse(id))
                 .ToList();
             
             var studentsFilter = Builders<BsonDocument>.Filter
@@ -73,20 +67,22 @@ namespace Courses.Api.Queries {
 
             var students = studentDocuments.Select(studentDoc => {
                 return new StudentSummaryModel {
-                    Email = studentDoc[Fields.StudentEmail].ToString(),
-                    Name = studentDoc[Fields.StudentName].ToString()
+                    Email = FromBson.GetStudentEmail(studentDoc),
+                    Name = FromBson.GetStudentName(studentDoc)
                 };
             })
             .ToList();
 
+            var summaryDoc = FromBson.GetSummaryDocument(document);
+
             return new CourseSummaryDetailModel {
-                Title = document[Fields.CourseTitle].ToString(),
+                Title = FromBson.GetCourseTitle(document),
                 Teacher = document[Fields.CourseTeacher].ToString(),
-                Capacity = document[Fields.CourseCapacity].ToInt32(),
-                StudentCount = studentCount,
-                MinAge = summaryDocument[Fields.AgeMin].ToInt32(),
-                MaxAge = summaryDocument[Fields.AgeMax].ToInt32(),
-                AverageAge = studentCount > 0 ? ageSum / studentCount : 0,
+                Capacity = FromBson.GetCourseCapacity(document),
+                StudentCount = FromBson.GetSummaryStudentCount(summaryDoc),
+                MinAge = FromBson.GetSummaryMin(summaryDoc),
+                MaxAge = FromBson.GetSummaryMax(summaryDoc),
+                AverageAge = FromBson.GetSummaryAvg(summaryDoc),
                 Students = students
             };
         }

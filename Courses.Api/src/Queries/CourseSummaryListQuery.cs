@@ -39,18 +39,15 @@ namespace Courses.Api.Queries {
 
             return documents
                 .Select(document => {
-                    var summaryDocument = document[Fields.CourseSummary].ToBsonDocument();
-
-                    int studentCount = summaryDocument[Fields.StudentCount].ToInt32();
-                    int ageSum = summaryDocument[Fields.AgeSum].ToInt32();
+                    var summaryDoc = FromBson.GetSummaryDocument(document);
 
                     return new CourseSummaryListModel {
-                        Title = document[Fields.CourseTitle].ToString(),
-                        Capacity = document[Fields.CourseCapacity].ToInt32(),
-                        StudentCount = studentCount,
-                        MinAge = summaryDocument[Fields.AgeMin].ToInt32(),
-                        MaxAge = summaryDocument[Fields.AgeMax].ToInt32(),
-                        AverageAge = studentCount > 0 ? ageSum / studentCount : 0
+                        Title = FromBson.GetCourseTitle(document),
+                        Capacity = FromBson.GetCourseCapacity(document),
+                        StudentCount = FromBson.GetSummaryStudentCount(summaryDoc),
+                        MinAge = FromBson.GetSummaryMin(summaryDoc),
+                        MaxAge = FromBson.GetSummaryMax(summaryDoc),
+                        AverageAge = FromBson.GetSummaryAvg(summaryDoc)
                     };
                 })
                 .ToList();

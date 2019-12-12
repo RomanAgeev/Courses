@@ -20,6 +20,7 @@ namespace Courses.Db {
             AgeMin = "ageMin",
             AgeMax = "ageMax",
             AgeSum = "ageSum",
+            AgeAvg = "ageAvg",
             StudentCount = "studentCount";
     }
 }
