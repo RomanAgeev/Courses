@@ -16,6 +16,10 @@ namespace Courses.Infrastructure {
             CourseSummary = "summary",
             StudentName = "name",
             StudentEmail = "email",
-            StudentAge = "age";
+            StudentAge = "age",
+            AgeMin = "ageMin",
+            AgeMax = "ageMax",
+            AgeSum = "ageSum",
+            StudentCount = "studentCount";
     }
 }

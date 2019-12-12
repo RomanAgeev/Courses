@@ -50,25 +50,20 @@ namespace Courses.Infrastructure {
     }
 
     public static class CourseSummaryBson {
-        const string FieldAgeMin = "ageMin";
-        const string FieldAgeMax = "ageMax";
-        const string FieldAgeSum = "ageSum";
-        const string FieldStudentCount = "studentCount";
-
         public static BsonDocument ToBson(this CourseSummary summary) =>
             new BsonDocument {
-                { FieldAgeMin, summary.AgeMin },
-                { FieldAgeMax, summary.AgeMax },
-                { FieldAgeSum, summary.AgeSum },
-                { FieldStudentCount, summary.StudentCount }
+                { Fields.AgeMin, summary.AgeMin },
+                { Fields.AgeMax, summary.AgeMax },
+                { Fields.AgeSum, summary.AgeSum },
+                { Fields.StudentCount, summary.StudentCount }
             };
 
         public static CourseSummary FromBson(BsonDocument document) =>
             new CourseSummary(
-                ageMin: document[FieldAgeMin].ToInt32(),
-                ageMax: document[FieldAgeMax].ToInt32(),
-                ageSum: document[FieldAgeSum].ToInt32(),
-                studentCount: document[FieldStudentCount].ToInt32()
+                ageMin: document[Fields.AgeMin].ToInt32(),
+                ageMax: document[Fields.AgeMax].ToInt32(),
+                ageSum: document[Fields.AgeSum].ToInt32(),
+                studentCount: document[Fields.StudentCount].ToInt32()
             );
     }
 
