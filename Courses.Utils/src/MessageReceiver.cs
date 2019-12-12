@@ -6,7 +6,8 @@ using RabbitMQ.Client.Events;
 
 namespace Courses.Utils {
     public interface IMessageReceiver : IDisposable {
-        void Subscribe<T>(Func<T, Task> handler) where T : class;
+        void Subscribe<T>(Func<T, Task> handler, Action<Exception, string> logError,
+            Action<Exception, string> logCritical) where T : class;
     }
 
     public class MessageReceiver : IMessageReceiver {
@@ -33,7 +34,9 @@ namespace Courses.Utils {
         readonly IConnection _connection;
         readonly IModel _channel;
 
-        public void Subscribe<T>(Func<T, Task> handler) where T : class {
+        public void Subscribe<T>(Func<T, Task> handler, Action<Exception, string> logError,
+            Action<Exception, string> logCritical) where T : class {
+
             Guard.NotNull(handler, nameof(handler));
 
             var consumer = new EventingBasicConsumer(_channel);
@@ -43,14 +46,14 @@ namespace Courses.Utils {
                 try {
                     data = Helpers.DeserializeObject<T>(ea.Body);
                 } catch(Exception e) {
-                    Console.WriteLine($"Invalid data format '{e.Message}'");
+                    logError(e, $"Invalid data format '{e.Message}'");
                 }
 
                 if (data != null) {
                     try {
                     await handler(data);
                     } catch(Exception e) {
-                        Console.WriteLine($"Unhandled exception '{e.Message}'");
+                        logCritical(e, $"Unhandled exception '{e.Message}'");
                         throw;
                     }
                 }

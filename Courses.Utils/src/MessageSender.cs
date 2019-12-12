@@ -4,6 +4,8 @@ using RabbitMQ.Client;
 
 namespace Courses.Utils {
     public interface IMessageSender : IDisposable {
+        string QueueName { get; }
+
         void SendMessage(object payload);
     }
 
@@ -31,9 +33,9 @@ namespace Courses.Utils {
         readonly IConnection _connection;
         readonly IModel _channel;
 
-        public void SendMessage(object payload) {
-            Console.WriteLine($" [x] Sending to {_queueName}");
+        public string QueueName => _queueName;
 
+        public void SendMessage(object payload) {
             Guard.NotNull(payload, nameof(payload));
 
             byte[] body = Helpers.SerializeObject(payload);

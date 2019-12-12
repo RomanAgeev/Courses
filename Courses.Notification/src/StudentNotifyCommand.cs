@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Courses.Utils;
 using FluentValidation;
+using Guards;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Courses.Notification {
     public class StudentNotifyCommand : IRequest<bool> {
@@ -24,11 +26,19 @@ namespace Courses.Notification {
     }
 
     public class StudentNotifyCommandHandler : IRequestHandler<StudentNotifyCommand, bool> {
+        public StudentNotifyCommandHandler(ILogger<StudentNotifyCommandHandler> logger) {
+            Guard.NotNull(logger, nameof(logger));
+
+            _logger = logger;
+        }
+
+        readonly ILogger<StudentNotifyCommandHandler> _logger;
+
         public Task<bool> Handle(StudentNotifyCommand command, CancellationToken ct) {
             if (command.Error != null) {
-                Console.WriteLine(command.Error);
+                _logger.LogWarning(command.Error);
             } else {
-                Console.WriteLine($"Student {command.StudentEmail} sucessfully logged in to the {command.CourseTitle} course");
+                _logger.LogInformation($"Student {command.StudentEmail} sucessfully logged in to the {command.CourseTitle} course");
             }
             return Task.FromResult(true);
         }

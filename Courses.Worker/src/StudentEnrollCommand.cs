@@ -6,6 +6,7 @@ using Courses.Utils;
 using FluentValidation;
 using Guards;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Courses.Worker {
     public class StudentEnrollCommand : IRequest<bool> {
@@ -25,19 +26,24 @@ namespace Courses.Worker {
     }
 
     public class StudentLogInCommandHandler : IRequestHandler<StudentEnrollCommand, bool> {
-        public StudentLogInCommandHandler(ICourseRepository courses, IStudentRepository students, IMessageSender messageSender) {
+        public StudentLogInCommandHandler(ICourseRepository courses, IStudentRepository students,
+            IMessageSender messageSender, ILogger<StudentLogInCommandHandler> logger) {
+
             Guard.NotNull(courses, nameof(courses));
             Guard.NotNull(students, nameof(students));
             Guard.NotNull(messageSender, nameof(messageSender));
+            Guard.NotNull(logger, nameof(logger));
 
             _courses = courses;
             _students = students;
             _messageSender = messageSender;
+            _logger = logger;
         }
 
         readonly ICourseRepository _courses;
         readonly IStudentRepository _students;
         readonly IMessageSender _messageSender;
+        readonly ILogger<StudentLogInCommandHandler> _logger;
 
         public async Task<bool> Handle(StudentEnrollCommand command, CancellationToken ct) {
             string error = null;
@@ -47,6 +53,8 @@ namespace Courses.Worker {
             } catch (DomainException e) {
                 error = e.Message;
             }
+
+            _logger.LogInformation($"Sending message to {_messageSender.QueueName}");
             
             _messageSender.SendMessage(new {
                 CourseTitle = command.CourseTitle,
