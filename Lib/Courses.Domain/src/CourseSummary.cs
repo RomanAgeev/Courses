@@ -3,7 +3,8 @@ using Guards;
 
 namespace Courses.Domain {
     public class CourseSummary {
-        public CourseSummary() : this(-1, -1, 0, 0, 0) {
+        public CourseSummary()
+            : this(-1, -1, 0, 0, 0) {
         }
         public CourseSummary(int ageMin, int ageMax, int ageSum, double ageAvg, int studentCount) {
             _ageMin = ageMin;

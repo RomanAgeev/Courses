@@ -29,16 +29,13 @@ namespace Courses.Db {
                 return null;
             }
 
-            var course = new Course(
+            return new Course(
+                id:         FromBson.GetId(document),
+                version:    FromBson.GetVersion(document),
                 title:      FromBson.GetCourseTitle(document),
                 teacher:    FromBson.GetCourseTeacher(document),
                 capacity:   FromBson.GetCourseCapacity(document)
             );
-
-            course.InitId(FromBson.GetId(document));
-            course.InitVersion(FromBson.GetVersion(document));
-
-            return course;
         }
 
         public async Task InsertCourseAsync(Course course) {

@@ -2,7 +2,9 @@ using Guards;
 
 namespace Courses.Domain {
     public class Student : Entity {
-        public Student(string name, int age, string email) {
+        public Student(string id, int version, string name, int age, string email)
+            : base(id, version) {
+            
             Guard.NotNullOrEmpty(name, nameof(name));
             Guard.NotZeroOrNegative(age, nameof(age));
             Guard.NotNullOrEmpty(email, nameof(email));
@@ -10,6 +12,10 @@ namespace Courses.Domain {
             _name = name;
             _age = age;
             _email = email;
+        }
+
+        public Student(string name, int age, string email)
+            : this(null, 0, name, age, email ){
         }
 
         readonly string _name;

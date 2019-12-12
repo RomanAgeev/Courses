@@ -3,30 +3,19 @@ using Guards;
 
 namespace Courses.Domain {
     public abstract class Entity {
-        string _id;
-        int? _version;
-
-        public string Id => _id;
-        public int Version => _version ?? 0;
-
-        public void InitId(string id) {
+        protected Entity(string id, int version) {
             Guard.NotNullOrEmpty(id, nameof(id));
-
-            if (_id != null) 
-                throw new Exception("TODO");
-
-            _id = id;
-        }
-
-        public void InitVersion(int version) {
             Guard.NotNegative(version, nameof(version));
 
-            if(_version.HasValue) {
-                throw new Exception("TODO");
-            }
-
+            _id = id;
             _version = version;
         }
+
+        readonly string _id;
+        int _version;
+
+        public string Id => _id;
+        public int Version => _version;
 
         protected void IncrementVersion() {
             _version++;
