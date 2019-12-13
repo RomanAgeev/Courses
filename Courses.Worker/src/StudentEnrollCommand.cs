@@ -25,9 +25,15 @@ namespace Courses.Worker {
         public string CourseTitle { get; set; }
     }
 
-    public class StudentLogInCommandHandler : IRequestHandler<StudentEnrollCommand, bool> {
-        public StudentLogInCommandHandler(ICourseRepository courses, IStudentRepository students,
-            IMessageSender messageSender, ILogger<StudentLogInCommandHandler> logger) {
+    public class StudentEnrollCommandHandler : IRequestHandler<StudentEnrollCommand, bool> {
+        public class MassagePayload {
+            public string CourseTitle { get; set; }
+            public string StudentEmail { get; set; }
+            public string Error { get; set; } 
+        }
+
+        public StudentEnrollCommandHandler(ICourseRepository courses, IStudentRepository students,
+            IMessageSender messageSender, ILogger<StudentEnrollCommandHandler> logger) {
 
             Guard.NotNull(courses, nameof(courses));
             Guard.NotNull(students, nameof(students));
@@ -43,7 +49,7 @@ namespace Courses.Worker {
         readonly ICourseRepository _courses;
         readonly IStudentRepository _students;
         readonly IMessageSender _messageSender;
-        readonly ILogger<StudentLogInCommandHandler> _logger;
+        readonly ILogger<StudentEnrollCommandHandler> _logger;
 
         public async Task<bool> Handle(StudentEnrollCommand command, CancellationToken ct) {
             string error = null;
@@ -56,7 +62,7 @@ namespace Courses.Worker {
 
             _logger.LogInformation($"Sending message to {_messageSender.QueueName}");
             
-            _messageSender.SendMessage(new {
+            _messageSender.SendMessage(new MassagePayload {
                 CourseTitle = command.CourseTitle,
                 StudentEmail = command.StudentEmail,
                 Error = error

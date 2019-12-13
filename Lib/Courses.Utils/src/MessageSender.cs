@@ -6,7 +6,7 @@ namespace Courses.Utils {
     public interface IMessageSender : IDisposable {
         string QueueName { get; }
 
-        void SendMessage(object payload);
+        void SendMessage<T>(T payload);
     }
 
     public class MessageSender : IMessageSender {
@@ -36,7 +36,7 @@ namespace Courses.Utils {
 
         public string QueueName => _queueName;
 
-        public void SendMessage(object payload) {
+        public void SendMessage<T>(T payload) {
             Guard.NotNull(payload, nameof(payload));
 
             byte[] body = Helpers.SerializeObject(payload);

@@ -14,13 +14,7 @@ namespace Courses.Domain.Tests {
                 summary:        new CourseSummary()
             );
 
-            var student = new Student(
-                id: "Student_1",
-                version: 0,
-                name: "Student 1",
-                age: 30,
-                email: "student1@test.com"
-            );
+            var student = TestHelpers.CreateStudent(id: 1, age: 30);
 
             enrollment.AddStudent(student);
 
@@ -43,13 +37,7 @@ namespace Courses.Domain.Tests {
                 summary:        new CourseSummary()
             );
 
-            var student = new Student(
-                id: "Student_3",
-                version: 0,
-                name: "Student 3",
-                age: 30,
-                email: "student3@test.com"
-            );
+            var student = TestHelpers.CreateStudent(id: 3, age: 30);
 
             enrollment.Invoking(it => it.AddStudent(student))
                 .Should().Throw<DomainException>();
@@ -66,13 +54,7 @@ namespace Courses.Domain.Tests {
                 summary:        new CourseSummary()
             );
 
-            var student = new Student(
-                id: "Student_1",
-                version: 0,
-                name: "Student 1",
-                age: 30,
-                email: "student1@test.com"
-            );
+            var student = TestHelpers.CreateStudent(id: 1, age: 30);
 
             enrollment.Invoking(it => it.AddStudent(student))
                 .Should().Throw<DomainException>();

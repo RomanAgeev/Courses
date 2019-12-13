@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{6632E88B-2A8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Domain.Tests", "Lib\Courses.Domain.Tests\Courses.Domain.Tests.csproj", "{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Courses.Worker.Tests", "Courses.Worker.Tests\Courses.Worker.Tests.csproj", "{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -116,6 +118,18 @@ Global
 		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|x64.Build.0 = Release|Any CPU
 		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|x86.ActiveCfg = Release|Any CPU
 		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D}.Release|x86.Build.0 = Release|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Debug|x64.Build.0 = Debug|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Debug|x86.Build.0 = Debug|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Release|x64.ActiveCfg = Release|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Release|x64.Build.0 = Release|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Release|x86.ActiveCfg = Release|Any CPU
+		{2C7A7F1D-8B17-494B-9984-7F1C6659FE11}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{598E468D-A7C4-41E4-B3EB-9843EEDCC22D} = {6632E88B-2A86-4AFF-A1D4-9FFE2C562EF2}
