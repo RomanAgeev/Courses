@@ -27,7 +27,7 @@ namespace Courses.Domain {
         public int StudentCount => _studentCount;
 
         public void AddStudent(int studentAge) {
-            Guard.NotNegative(studentAge, nameof(studentAge));
+            Guard.NotZeroOrNegative(studentAge, nameof(studentAge));
 
             _ageMin = _ageMin < 0 ? studentAge : Math.Min(_ageMin, studentAge);
             _ageMax = _ageMax < 0 ? studentAge : Math.Max(_ageMax, studentAge);
