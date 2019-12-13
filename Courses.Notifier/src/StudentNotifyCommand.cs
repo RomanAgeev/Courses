@@ -38,7 +38,7 @@ namespace Courses.Notifier {
             if (command.Error != null) {
                 _logger.LogWarning(command.Error);
             } else {
-                _logger.LogInformation($"Student {command.StudentEmail} sucessfully logged in to the {command.CourseTitle} course");
+                _logger.LogInformation($"Student {command.StudentEmail} sucessfully enrolled to the {command.CourseTitle} course");
             }
             return Task.FromResult(true);
         }
